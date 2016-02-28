@@ -50,6 +50,10 @@ public class Production {
 		// Initialize the "transitionMap"
 		//
 		Production.transitionMap = new HashMap<>();
+		
+		// transfor(START, letters) = HEAD.
+		
+		// tranfor(HEAD, letters & nubmers) = HEAD.
 	}
 
 	public Production() {
@@ -83,6 +87,25 @@ public class Production {
 				break;
 			}
 		}
+	}
+	
+	private static void updateTransitionMap(State origin, char currentChar, State target)
+			throws Exception{
+		
+		Map<State, Map<Character, State>> map  = transitionMap;
+		
+		Map<Character, State> valueMap = map.get(origin);
+		
+		if (valueMap != null){
+			throw new Exception("Oops, there is already a transformation from " + origin + " , " + currentChar + " to " + target + ".");
+		}
+		
+		valueMap = new HashMap<>();
+		valueMap.put(currentChar, target);
+		
+		map.put(origin, valueMap);
+		
+		
 	}
 
 	@Override
