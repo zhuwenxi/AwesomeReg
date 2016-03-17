@@ -29,26 +29,28 @@ public class Regexp {
 	//
 	private AbstractSyntaxTree ast;
 	
+	
+	
+	
 	public Regexp(){
 		
 	}
 	
 	public Regexp(String regexpString){
-		System.out.println("Hello");
 		this.regexpString = regexpString;
 		
+		System.out.println(regexpString);
 		//
 		// Construct LR-automata:
 		// 
-//		ContextFreeGrammar grammar = new ContextFreeGrammar(regexpGrammarStrings);
-//		this.lrAutomata = new LrAutomata(grammar);
+		ContextFreeGrammar grammar = new ContextFreeGrammar(regexpGrammarStrings);
+		this.lrAutomata = new LrAutomata(grammar);
 		
 		//
 		// Generate AST:
 		//
-//		this.ast = this.lrAutomata.parse(regexpString);
+		this.ast = this.lrAutomata.parse(regexpString);
 		
-		System.out.println("Hello");
 	}
 	
 	@Override 

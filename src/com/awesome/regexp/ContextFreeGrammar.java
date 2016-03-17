@@ -5,18 +5,12 @@ import java.util.List;
 
 public class ContextFreeGrammar {
 	
-	private List<Production> productions;
+	protected List<Production> productions;
 	
 	public ContextFreeGrammar(){
 		productions = new ArrayList<Production>();
 	}
-	
-	/*public ContextFreeGrammar(List<Production> produtions)
-	{
-		this();
-		this.productions = produtions;
-	}*/
-	
+		
 	public ContextFreeGrammar(String[] grammarStrings){
 		this();
 		for (String grammarItem : grammarStrings)
@@ -26,8 +20,8 @@ public class ContextFreeGrammar {
 		}
 	}
 	
-	public List<Production> getProductions(){
-		return productions;
+	public ContextFreeGrammar(List<Production> productions){
+		this.productions = productions;
 	}
 	
 	@Override

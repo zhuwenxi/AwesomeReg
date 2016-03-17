@@ -7,10 +7,10 @@ import java.util.Map;
 
 public class Production {
 
-	private String productionString;
+	public String productionString;
 
-	private ProductionToken head;
-	private List<ProductionToken> body;
+	public ProductionToken head;
+	public List<ProductionToken> body;
 
 	private static List<Character> letters;
 	private static List<Character> numbers;
@@ -57,14 +57,16 @@ public class Production {
 	}
 
 	public Production() {
-
+		this.body = new ArrayList<ProductionToken>();
 	}
 
 	public Production(String productionString) {
-
 		this.productionString = productionString;
-
-		generateProduction(productionString);
+	}
+	
+	public Production(ProductionToken head, List<ProductionToken> body){
+		this.head = head;
+		this.body = body;
 	}
 
 	private void generateProduction(String productionString) {
