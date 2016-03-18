@@ -26,6 +26,13 @@ public class ContextFreeGrammar {
 	
 	@Override
 	public String toString(){
-		return super.toString();
+		String retVal = "";
+		
+		for (Production prod : productions){
+			retVal += prod.toString();
+			retVal += '\n';
+		}
+		
+		return retVal;
 	}
 }

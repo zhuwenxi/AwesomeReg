@@ -39,11 +39,11 @@ public class Regexp {
 	public Regexp(String regexpString){
 		this.regexpString = regexpString;
 		
-		System.out.println(regexpString);
 		//
 		// Construct LR-automata:
 		// 
-		ContextFreeGrammar grammar = new ContextFreeGrammar(regexpGrammarStrings);
+		ContextFreeGrammar grammar = new RegularExpressionContextFreeGrammar();
+		System.out.println(grammar);
 		this.lrAutomata = new LrAutomata(grammar);
 		
 		//

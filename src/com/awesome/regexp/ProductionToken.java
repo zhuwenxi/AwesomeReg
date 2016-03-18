@@ -12,7 +12,7 @@ public class ProductionToken {
 	
 	public boolean isCollection;
 	
-	private List<Character> collection;
+	public List<Character> collection;
 	
 	
 	
@@ -34,7 +34,8 @@ public class ProductionToken {
 		this.isTerminal = isTerminal;
 	}
 	
-	public void initCollection(){
-		
+	@Override
+	public String toString(){
+		return this.text;
 	}
 }

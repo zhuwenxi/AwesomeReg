@@ -112,7 +112,19 @@ public class Production {
 
 	@Override
 	public String toString() {
-		return this.productionString;
+		String retVal = "";
+		
+		retVal += this.head.toString();
+		retVal += "->";
+		
+		for(ProductionToken productionToken : this.body){
+			retVal += productionToken.toString();
+			retVal += ' ';
+		}
+		
+		retVal += '\n';
+		
+		return retVal;
 	}
 }
 
