@@ -12,6 +12,8 @@ public class ProductionToken {
 	
 	public boolean isCollection;
 	
+	public boolean isDotSymbol;
+	
 	public List<Character> collection;
 	
 	

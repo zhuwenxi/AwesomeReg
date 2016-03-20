@@ -69,47 +69,47 @@ public class Production {
 		this.body = body;
 	}
 
-	private void generateProduction(String productionString) {
-
-		int cur = 0;
-		State state = State.START;
-
-		int start = 0;
-		int end = 0;
-
-		while (state != State.ERROR && !State.isAccept(state)) {
-
-			char currentChar = productionString.charAt(cur);
-
-			switch (state) {
-			case START:
-				break;
-			default:
-				System.out.println("Oops!");
-				break;
-			}
-		}
-	}
-	
-	private static void updateTransitionMap(State origin, char currentChar, State target)
-			throws Exception{
-		
-		Map<State, Map<Character, State>> map  = transitionMap;
-		
-		Map<Character, State> valueMap = map.get(origin);
-		
-		if (valueMap != null){
-			throw new Exception("Oops, there is already a transformation from " + origin + " , " + currentChar + " to " + target + ".");
-		}
-		
-		valueMap = new HashMap<>();
-		valueMap.put(currentChar, target);
-		
-		map.put(origin, valueMap);
-		
-		
-	}
-
+//	private void generateProduction(String productionString) {
+//
+//		int cur = 0;
+//		State state = State.START;
+//
+//		int start = 0;
+//		int end = 0;
+//
+//		while (state != State.ERROR && !State.isAccept(state)) {
+//
+//			char currentChar = productionString.charAt(cur);
+//
+//			switch (state) {
+//			case START:
+//				break;
+//			default:
+//				System.out.println("Oops!");
+//				break;
+//			}
+//		}
+//	}
+//	
+//	private static void updateTransitionMap(State origin, char currentChar, State target)
+//			throws Exception{
+//		
+//		Map<State, Map<Character, State>> map  = transitionMap;
+//		
+//		Map<Character, State> valueMap = map.get(origin);
+//		
+//		if (valueMap != null){
+//			throw new Exception("Oops, there is already a transformation from " + origin + " , " + currentChar + " to " + target + ".");
+//		}
+//		
+//		valueMap = new HashMap<>();
+//		valueMap.put(currentChar, target);
+//		
+//		map.put(origin, valueMap);
+//		
+//		
+//	}
+//
 	@Override
 	public String toString() {
 		String retVal = "";
@@ -126,35 +126,35 @@ public class Production {
 		
 		return retVal;
 	}
-}
+//}
 
-enum State {
-	START, 
-	HEAD, 
-	HEAD_ACCEPT(true), 
-	ARROW_DASH, 
-	ARROW_ACCEPT(true), 
-	BODY_TOKEN, 
-	BODY_TOKEN_ACCEPT(true), 
-	PIPE_SYMBOL(true), 
-	COLLECTION_LEFT_SQUARE_BRACKET, 
-	COLLECTION_START_CHAR, 
-	COLLECTION_DASH_CHAR, 
-	COLLECTION_END_CHAR, 
-	COLLECTION_ACCEPT(true), 
-	ERROR;
-
-	public final boolean isAccept;
-
-	private State() {
-		this(false);
-	}
-
-	private State(boolean isAccept) {
-		this.isAccept = isAccept;
-	}
-
-	public static boolean isAccept(State self) {
-		return self.isAccept;
-	}
+//enum State {
+//	START, 
+//	HEAD, 
+//	HEAD_ACCEPT(true), 
+//	ARROW_DASH, 
+//	ARROW_ACCEPT(true), 
+//	BODY_TOKEN, 
+//	BODY_TOKEN_ACCEPT(true), 
+//	PIPE_SYMBOL(true), 
+//	COLLECTION_LEFT_SQUARE_BRACKET, 
+//	COLLECTION_START_CHAR, 
+//	COLLECTION_DASH_CHAR, 
+//	COLLECTION_END_CHAR, 
+//	COLLECTION_ACCEPT(true), 
+//	ERROR;
+//
+//	public final boolean isAccept;
+//
+//	private State() {
+//		this(false);
+//	}
+//
+//	private State(boolean isAccept) {
+//		this.isAccept = isAccept;
+//	}
+//
+//	public static boolean isAccept(State self) {
+//		return self.isAccept;
+//	}
 }

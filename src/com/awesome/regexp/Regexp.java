@@ -43,7 +43,7 @@ public class Regexp {
 		// Construct LR-automata:
 		// 
 		ContextFreeGrammar grammar = new RegularExpressionContextFreeGrammar();
-		System.out.println(grammar);
+//		System.out.println(grammar);
 		this.lrAutomata = new LrAutomata(grammar);
 		
 		//

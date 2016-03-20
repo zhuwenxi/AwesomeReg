@@ -30,7 +30,6 @@ public class ContextFreeGrammar {
 		
 		for (Production prod : productions){
 			retVal += prod.toString();
-			retVal += '\n';
 		}
 		
 		return retVal;

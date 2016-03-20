@@ -20,6 +20,15 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		ProductionToken head;
 		List<ProductionToken> body;
 		
+		// Regexp' -> Regexp
+		head = new ProductionToken("Regexp'", false);
+		
+		body = new ArrayList<ProductionToken>();
+		body.add(new ProductionToken("Regexp", false));
+		
+		production = new Production(head, body);
+		this.productions.add(production);
+		
 		// Regexp -> Regexp | Concat
 		head = new ProductionToken("Regexp", false);
 		
