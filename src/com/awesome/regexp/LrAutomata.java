@@ -34,7 +34,7 @@ public class LrAutomata {
 		
 		this.grammar = addDOTPrefix(grammar);
 		
-//		constructStates();
+		constructStates();
 	}
 	
 	public AbstractSyntaxTree parse(String input) {
@@ -97,8 +97,20 @@ public class LrAutomata {
 		return states;
 	}
 	
-	private State transfor(State originState, ProductionToken symbol) {
-		return null;
+	private State transfor(State origin, ProductionToken symbol) {
+		State target = new State();
+		
+		for (Production production : origin.getProductions()) {
+			List<ProductionToken> body = production.body;
+			
+			ProductionToken dotSymbol = new ProductionToken("DOT", true);
+			dotSymbol.isDotSymbol = true;
+			
+			int indexOfDot = body.indexOf(dotSymbol);
+		}
+		
+		
+		return target;
 	}
 	
 	private List<State> closure(List<State> states) {
@@ -123,14 +135,18 @@ public class LrAutomata {
 }
 
 class State {
-	private ContextFreeGrammar grammar;
+	public ContextFreeGrammar grammar;
 	
 	public State() {
-		
+		this.grammar = new ContextFreeGrammar();
 	}
 	
 	public void add(Production prod) {
-		grammar.productions.add(prod);
+		this.grammar.productions.add(prod);
+	}
+	
+	public List<Production> getProductions() {
+		return grammar.productions;
 	}
 }
 
