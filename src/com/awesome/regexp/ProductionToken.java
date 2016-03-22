@@ -40,4 +40,12 @@ public class ProductionToken {
 	public String toString(){
 		return this.text;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		
+		ProductionToken that = (ProductionToken)o;
+		
+		return this.isTerminal == that.isTerminal && this.isNonTerminal == that.isNonTerminal && this.isCollection == that.isCollection && this.isDotSymbol == this.isDotSymbol && this.text.equals(that.text);
+	}
 }
