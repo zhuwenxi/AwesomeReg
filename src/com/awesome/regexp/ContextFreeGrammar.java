@@ -34,4 +34,9 @@ public class ContextFreeGrammar {
 		
 		return retVal;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return true;
+	}
 }

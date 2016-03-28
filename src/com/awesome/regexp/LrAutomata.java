@@ -66,8 +66,9 @@ public class LrAutomata {
 				}
 			}
 			
-			
 		}
+		
+//		System.out.println(this.symbols);
 		
 		return this.symbols;
 	}
@@ -86,6 +87,8 @@ public class LrAutomata {
 				for (ProductionToken symbol : this.symbols) {
 					State targetState = transfor(originState, symbol);
 					
+					System.out.println(targetState);
+					
 					if (!states.contains(targetState)) {
 						states.add(targetState);
 					}
@@ -98,7 +101,9 @@ public class LrAutomata {
 	}
 	
 	private State transfor(State origin, ProductionToken symbol) {
+		
 		State target = new State();
+		List<Production> items = null;
 		
 		for (Production production : origin.getProductions()) {
 			List<ProductionToken> body = production.body;
@@ -109,12 +114,13 @@ public class LrAutomata {
 			int indexOfDot = body.indexOf(dotSymbol);
 		}
 		
+		target.items = closure(items);
 		
 		return target;
 	}
 	
-	private List<State> closure(List<State> states) {
-		return states;
+	private List<Production> closure(List<Production> productions) {
+		return null;
 	}
 	
 	private void initInputQueue(String input){
@@ -135,18 +141,48 @@ public class LrAutomata {
 }
 
 class State {
-	public ContextFreeGrammar grammar;
+	public List<Production> items;
 	
 	public State() {
-		this.grammar = new ContextFreeGrammar();
+		this.items = new ArrayList<>();
+	}
+	
+	public State(List<Production> productions) {
+		this();
+		this.items = productions;
 	}
 	
 	public void add(Production prod) {
-		this.grammar.productions.add(prod);
+		this.items.add(prod);
 	}
 	
 	public List<Production> getProductions() {
-		return grammar.productions;
+		return this.items;
+	}
+	
+	@Override 
+ 	public boolean equals(Object o) {
+		State that = (State)o;
+		
+		if(this.items == null || that.items == null) {
+			return true;
+		}
+		
+		if (this.items != null && that.items != null) {
+			return this.items.equals(that.items);
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		if (this.items != null) {
+			return this.items.toString();
+		} else {
+			return null;
+		}
+		
 	}
 }
 
