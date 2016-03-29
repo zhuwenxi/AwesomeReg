@@ -23,6 +23,7 @@ public class ProductionToken {
 		this.isTerminal = true;
 		this.isNonTerminal = false;
 		this.isCollection = false;
+		this.isDotSymbol = false;
 	}
 	
 	public ProductionToken(String text){
@@ -48,4 +49,5 @@ public class ProductionToken {
 		
 		return this.isTerminal == that.isTerminal && this.isNonTerminal == that.isNonTerminal && this.isCollection == that.isCollection && this.isDotSymbol == this.isDotSymbol && this.text.equals(that.text);
 	}
+	
 }

@@ -68,6 +68,9 @@ public class LrAutomata {
 			
 		}
 		
+		// Remove the symbol "Regexp'"
+		this.symbols.remove(0);
+		
 //		System.out.println(this.symbols);
 		
 		return this.symbols;
@@ -83,13 +86,31 @@ public class LrAutomata {
 		int lastSize = states.size();
 		
 		do {
-			for (State originState : states) {
+//			for (State originState : states) {
+//				for (ProductionToken symbol : this.symbols) {
+//					State targetState = transfor(originState, symbol);
+//					
+//					System.out.println("origin:" + originState);
+//					System.out.println("symbol:" + symbol);
+//					System.out.println("target:" + targetState);
+//					
+//					if (targetState != null && !states.contains(targetState)) {
+//						states.add(targetState);
+//					}
+//				}
+//			}
+			
+			for (int i = 0; i < states.size(); i ++) {
+				State originState = states.get(i);
+				
 				for (ProductionToken symbol : this.symbols) {
 					State targetState = transfor(originState, symbol);
 					
-					System.out.println(targetState);
+					System.out.println("origin:" + originState);
+					System.out.println("symbol:" + symbol);
+					System.out.println("target:" + targetState);
 					
-					if (!states.contains(targetState)) {
+					if (targetState != null && !states.contains(targetState)) {
 						states.add(targetState);
 					}
 				}
@@ -102,8 +123,7 @@ public class LrAutomata {
 	
 	private State transfor(State origin, ProductionToken symbol) {
 		
-		State target = new State();
-		List<Production> items = null;
+		State target = null;
 		
 		for (Production production : origin.getProductions()) {
 			List<ProductionToken> body = production.body;
@@ -112,15 +132,33 @@ public class LrAutomata {
 			dotSymbol.isDotSymbol = true;
 			
 			int indexOfDot = body.indexOf(dotSymbol);
+			
+			if (indexOfDot < body.size() - 1) {
+				ProductionToken symbolNextToDot = body.get(indexOfDot + 1);
+				
+				if (symbolNextToDot != null && symbolNextToDot.equals(symbol)) {
+					if (target == null) {
+						target = new State();
+					}
+					
+					Production item = production.clone();
+					item.body.set(indexOfDot, symbolNextToDot);
+					item.body.set(indexOfDot + 1, dotSymbol);
+					
+					target.items.add(item);
+				}
+			}
 		}
 		
-		target.items = closure(items);
-		
+		if (target != null) {
+			target.items = closure(target.items);
+		}
+			
 		return target;
 	}
 	
 	private List<Production> closure(List<Production> productions) {
-		return null;
+		return productions;
 	}
 	
 	private void initInputQueue(String input){
@@ -183,6 +221,20 @@ class State {
 			return null;
 		}
 		
+	}
+	
+	@Override 
+	public State clone() {
+		State cloneState = new State();
+		List<Production> cloneItems = new ArrayList<>();
+		
+		for (Production p : this.items) {
+			cloneItems.add((Production)p.clone());
+		}
+		
+		cloneState.items = cloneItems;
+		
+		return cloneState;
 	}
 }
 

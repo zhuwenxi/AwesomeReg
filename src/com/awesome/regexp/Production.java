@@ -126,7 +126,27 @@ public class Production {
 		
 		return retVal;
 	}
-//}
+	
+	@Override
+	public Production clone() {
+		Production cloneObj = new Production();
+		
+		cloneObj.head = (ProductionToken)this.head;
+		
+		for (ProductionToken pt : this.body) {
+			cloneObj.body.add(pt);
+		}
+		
+		return cloneObj;
+	}
+	
+	@Override 
+	public boolean equals(Object o) {
+		Production that = (Production)o;
+		
+		return this.head.equals(that.head) && this.body.equals(that.body);
+	}
+}
 
 //enum State {
 //	START, 
@@ -157,4 +177,4 @@ public class Production {
 //	public static boolean isAccept(State self) {
 //		return self.isAccept;
 //	}
-}
+//}
