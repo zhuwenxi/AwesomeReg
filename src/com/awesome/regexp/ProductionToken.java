@@ -47,6 +47,9 @@ public class ProductionToken {
 		
 		ProductionToken that = (ProductionToken)o;
 		
+		if (o == null) {
+			return false;
+		}
 		return this.isTerminal == that.isTerminal && this.isNonTerminal == that.isNonTerminal && this.isCollection == that.isCollection && this.isDotSymbol == this.isDotSymbol && this.text.equals(that.text);
 	}
 	

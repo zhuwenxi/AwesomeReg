@@ -37,6 +37,7 @@ public class LrAutomata {
 		this.states = constructStates(this.grammar);
 		
 		System.out.println(this.states);
+		System.out.println(this.states.size());
 	}
 	
 	public AbstractSyntaxTree parse(String input) {
@@ -126,32 +127,10 @@ public class LrAutomata {
 				}
 				
 				Production item = production.clone();
-//				item.body.set(indexOfDot, symbolNextToDot);
-//				item.body.set(indexOfDot + 1, dotSymbol);
+				switchDotSymbolWithNext(item);
 				
 				target.items.add(item);
 			}
-			
-//			ProductionToken dotSymbol = new ProductionToken("DOT", true);
-//			dotSymbol.isDotSymbol = true;
-//			
-//			int indexOfDot = body.indexOf(dotSymbol);
-//			
-//			if (indexOfDot < body.size() - 1) {
-//				ProductionToken symbolNextToDot = body.get(indexOfDot + 1);
-//				
-//				if (symbolNextToDot != null && symbolNextToDot.equals(symbol)) {
-//					if (target == null) {
-//						target = new State();
-//					}
-//					
-//					Production item = production.clone();
-//					item.body.set(indexOfDot, symbolNextToDot);
-//					item.body.set(indexOfDot + 1, dotSymbol);
-//					
-//					target.items.add(item);
-//				}
-//			}
 		}
 		
 		if (target != null) {
@@ -162,15 +141,24 @@ public class LrAutomata {
 	}
 	
 	private State closure(State state) {
+//		return state;
+//		System.out.println("before: " + state);
 		for (int i = 0; i < state.items.size(); i ++) {
 			Production item = state.items.get(i);
-//			ProductionToken symbolNextToDot = 
+			ProductionToken symbolNextToDot = this.getSymbolNextToDot(item);
+			
+//			System.out.println("symbol: " + symbolNextToDot);
 			
 			for (Production grammarItem : this.grammar.productions) {
-				
+//				System.out.println("grammar item:" + grammarItem);
+				if (grammarItem.head.equals(symbolNextToDot) && !state.contains(grammarItem)) {
+//					System.out.println("grammarItem:" + grammarItem);
+					state.add(grammarItem);
+				}
 			}
 		}
 		
+//		System.out.println("closure:" + state + "\n");
 		return state;
 	}
 	
@@ -204,6 +192,21 @@ public class LrAutomata {
 		}
 	}
 	
+	private void switchDotSymbolWithNext(Production production) {
+		List<ProductionToken> body = production.body;
+		
+		ProductionToken dotSymbol = new ProductionToken("DOT", true);
+		dotSymbol.isDotSymbol = true;
+		
+		int indexOfDot = body.indexOf(dotSymbol);
+		if (indexOfDot < body.size() - 1) {
+			ProductionToken nextSymbol = body.get(indexOfDot + 1);
+			
+			body.set(indexOfDot, nextSymbol);
+			body.set(indexOfDot + 1, dotSymbol);
+		} 
+	}
+	
 	
 }
 
@@ -221,6 +224,10 @@ class State {
 	
 	public void add(Production prod) {
 		this.items.add(prod);
+	}
+	
+	public boolean contains(Production prod) {
+		return this.items.contains(prod);
 	}
 	
 	public List<Production> getProductions() {
