@@ -68,7 +68,7 @@ public class LrAutomata {
 			
 		}
 		
-		// Remove the symbol "Regexp'"
+		// Dirty implementation. Remove the symbol "Regexp'"
 		this.symbols.remove(0);
 		
 //		System.out.println(this.symbols);
@@ -83,22 +83,10 @@ public class LrAutomata {
 		List<State> states = new ArrayList<State>();
 		states.add(state0);
 		
-		int lastSize = states.size();
+		int lastSize = -1;
 		
 		do {
-//			for (State originState : states) {
-//				for (ProductionToken symbol : this.symbols) {
-//					State targetState = transfor(originState, symbol);
-//					
-//					System.out.println("origin:" + originState);
-//					System.out.println("symbol:" + symbol);
-//					System.out.println("target:" + targetState);
-//					
-//					if (targetState != null && !states.contains(targetState)) {
-//						states.add(targetState);
-//					}
-//				}
-//			}
+			lastSize = states.size();
 			
 			for (int i = 0; i < states.size(); i ++) {
 				State originState = states.get(i);
@@ -106,9 +94,9 @@ public class LrAutomata {
 				for (ProductionToken symbol : this.symbols) {
 					State targetState = transfor(originState, symbol);
 					
-					System.out.println("origin:" + originState);
-					System.out.println("symbol:" + symbol);
-					System.out.println("target:" + targetState);
+//					System.out.println("origin:" + originState);
+//					System.out.println("symbol:" + symbol);
+//					System.out.println("target:" + targetState);
 					
 					if (targetState != null && !states.contains(targetState)) {
 						states.add(targetState);
