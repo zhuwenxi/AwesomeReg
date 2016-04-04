@@ -36,12 +36,19 @@ public class LrAutomata {
 		
 		this.states = constructStates(this.grammar);
 		
-		System.out.println(this.states);
-		System.out.println(this.states.size());
+//		System.out.println(this.states);
+//		System.out.println(this.states.size());
 	}
 	
 	public AbstractSyntaxTree parse(String input) {
 		initInputQueue(input);
+		this.stateStack.push(this.states.get(0));
+		Action action = null;
+		
+		while (action == Action.ERROR) {
+			State state = this.stateStack.peek();
+			action = action(state, null);
+		}
 		
 		return null;
 	}
@@ -138,6 +145,10 @@ public class LrAutomata {
 		}
 			
 		return target;
+	}
+	
+	private Action action(State state, ProductionToken symbol) {
+		return null;
 	}
 	
 	private State closure(State state) {
@@ -276,6 +287,10 @@ class State {
 
 class ActionTable {
 	
+}
+
+enum Action {
+	SHIFT, REDUCE, ACCEPT, ERROR
 }
 
 class GotoTable {
