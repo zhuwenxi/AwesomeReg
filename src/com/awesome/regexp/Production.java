@@ -122,7 +122,7 @@ public class Production {
 			retVal += ' ';
 		}
 		
-		retVal += '\n';
+//		retVal += '\n';
 		
 		return retVal;
 	}

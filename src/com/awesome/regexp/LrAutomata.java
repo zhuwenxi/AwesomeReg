@@ -1,8 +1,10 @@
 package com.awesome.regexp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 public class LrAutomata {
@@ -15,9 +17,9 @@ public class LrAutomata {
 	
 	private LinkedList<Character> inputQueue;
 	
-	private ActionTable action;
+	private ActionTable actionTable;
 	
-	private GotoTable transfor;
+	private GotoTable gotoTable;
 	
 	private List<ProductionToken> symbols;
 	
@@ -25,10 +27,13 @@ public class LrAutomata {
 	
 	
 	public LrAutomata(){
-		
+		this.stateStack = new Stack<State>();
+		this.gotoTable = new GotoTable();
+		this.actionTable = new ActionTable();
 	}
 	
 	public LrAutomata(ContextFreeGrammar grammar) {
+		this();
 		
 		initSymbolList(grammar);
 		
@@ -36,6 +41,7 @@ public class LrAutomata {
 		
 		this.states = constructStates(this.grammar);
 		
+		printStates();
 //		System.out.println(this.states);
 //		System.out.println(this.states.size());
 	}
@@ -45,7 +51,7 @@ public class LrAutomata {
 		this.stateStack.push(this.states.get(0));
 		Action action = null;
 		
-		while (action == Action.ERROR) {
+		while (action != null && action == Action.ERROR) {
 			State state = this.stateStack.peek();
 			action = action(state, null);
 		}
@@ -142,6 +148,9 @@ public class LrAutomata {
 		
 		if (target != null) {
 			target = closure(target);
+			
+			//Update gotoTable
+			this.gotoTable.update(origin, symbol, target);
 		}
 			
 		return target;
@@ -218,6 +227,20 @@ public class LrAutomata {
 		} 
 	}
 	
+	private void printStates() {
+		int stateIndex = 0;
+		for (State state : this.states) {
+			System.out.println("state " + stateIndex + ":");
+			stateIndex ++;
+			
+			for (Production prod : state.items) {
+				System.out.println(prod);
+			}
+			
+			System.out.print("\n");
+		}
+	}
+	
 	
 }
 
@@ -285,14 +308,37 @@ class State {
 	}
 }
 
-class ActionTable {
-	
-}
+
+
 
 enum Action {
 	SHIFT, REDUCE, ACCEPT, ERROR
 }
 
-class GotoTable {
+class GotoTable extends Table{
+	public GotoTable() {
+		super();
+	}
+	
+	public void update(State origin, ProductionToken symbol, State target) {
+		
+	}
+	
+	public State nextState(State origin, ProductionToken symbol) {
+		return null;
+	}
+}
+
+class ActionTable extends Table{
+	
+}
+
+class Table {
+	private Map<State, Map<ProductionToken, State>> tableImpl;
+	
+	public Table() {
+		this.tableImpl = new HashMap<State, Map<ProductionToken, State>>();
+	}
+	
 	
 }
