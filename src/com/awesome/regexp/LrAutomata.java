@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 
 public class LrAutomata {
@@ -41,7 +42,8 @@ public class LrAutomata {
 		
 		this.states = constructStates(this.grammar);
 		
-		printStates();
+//		printStates();
+		System.out.println(this.gotoTable);
 //		System.out.println(this.states);
 //		System.out.println(this.states.size());
 	}
@@ -322,11 +324,69 @@ class GotoTable extends Table{
 	
 	public void update(State origin, ProductionToken symbol, State target) {
 		
+		if (!this.tableImpl.containsKey(origin)) {
+			this.tableImpl.put(origin, new HashMap<ProductionToken, State>() );
+		} 
+		
+		Map<ProductionToken, State> secondaryMap = this.tableImpl.get(origin);
+		
+		if (secondaryMap != null) {
+			if (secondaryMap.get(symbol) == null) {
+				secondaryMap.put(symbol, target);
+			} else {
+				// Should not get here.
+				assert false;
+			}
+		} else {
+			// Should not get here.
+			assert false;
+		}
 	}
 	
 	public State nextState(State origin, ProductionToken symbol) {
-		return null;
+		
+		Map<ProductionToken, State> secondaryMap = this.tableImpl.get(origin);
+		
+		if (secondaryMap != null) {
+			return secondaryMap.get(symbol);
+		} else {
+			// Should not get here.
+			assert false;
+			return null;
+		}
 	}
+	
+	@Override
+	public String toString() {
+		
+		String retStr = "";
+		
+		for (Entry<State, Map<ProductionToken, State>> hashByStateEntry : this.tableImpl.entrySet()) {
+			State origin = hashByStateEntry.getKey();
+			Map<ProductionToken, State> hashBySymbol = hashByStateEntry.getValue();
+			
+			for (Entry<ProductionToken, State> hashBySymbolEntry : hashBySymbol.entrySet()) {
+				ProductionToken symbol = hashBySymbolEntry.getKey();
+				State target = hashBySymbolEntry.getValue();
+				
+				retStr += "Origin:\n";
+				retStr += origin.toString();
+				retStr += "\n";
+				
+				retStr += "Symbol:\n";
+				retStr += symbol.toString();
+				retStr += "\n";
+				
+				retStr += "Target:\n";
+				retStr += target.toString();
+				retStr += "\n";
+				
+				retStr += "=================================================================\n";
+			}
+		}
+		return retStr;
+	}
+	
 }
 
 class ActionTable extends Table{
@@ -334,7 +394,7 @@ class ActionTable extends Table{
 }
 
 class Table {
-	private Map<State, Map<ProductionToken, State>> tableImpl;
+	protected Map<State, Map<ProductionToken, State>> tableImpl;
 	
 	public Table() {
 		this.tableImpl = new HashMap<State, Map<ProductionToken, State>>();
