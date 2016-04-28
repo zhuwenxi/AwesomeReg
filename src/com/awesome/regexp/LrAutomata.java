@@ -42,6 +42,8 @@ public class LrAutomata {
 		
 		this.states = constructStates(this.grammar);
 		
+		constructActionTable();
+		
 //		printStates();
 		System.out.println(this.gotoTable);
 //		System.out.println(this.states);
@@ -53,7 +55,7 @@ public class LrAutomata {
 		this.stateStack.push(this.states.get(0));
 		Action action = null;
 		
-		while (action != null && action == Action.ERROR) {
+		while (action != null && action != Action.ERROR) {
 			State state = this.stateStack.peek();
 			action = action(state, null);
 		}
@@ -128,6 +130,50 @@ public class LrAutomata {
 		return states;
 	}
 	
+	private void constructActionTable() {
+		for (State state : this.states) {
+			for (Production prod : state.getProductions()) {
+				
+				ProductionToken dotSymbol = new ProductionToken("DOT", true);
+				dotSymbol.isDotSymbol = true;
+				
+				int indexOfDot = prod.body.indexOf(dotSymbol);
+				
+				Action action = null;
+				
+				if (indexOfDot == prod.body.size() - 1) {
+					
+					if (prod.equals(this.states.get(0).getProductions().get(0))) {
+						// state contains the production "Regexp' -> Regexp DOT"
+						action = Action.ACCEPT;
+						ProductionToken dollarSymbol = new ProductionToken("$", true);
+						
+						this.actionTable.update(state, dollarSymbol, action);
+					} else {
+						List<ProductionToken> followSet = follow(prod.head);
+						
+						for (ProductionToken symbol : followSet) {
+							action = Action.REDUCE;
+							this.actionTable.update(state, symbol, action);
+						}
+					}
+					
+				} else if (indexOfDot >= 0 && indexOfDot < prod.body.size() - 1 ){
+					ProductionToken symbolNextToDot = getSymbolNextToDot(prod);
+					
+					if (symbolNextToDot.isTerminal == true) {
+						State shiftTo = nextState(state, symbolNextToDot);
+						
+						action = Action.SHIFT;
+						action.shiftTo = shiftTo;
+					}
+				} {
+					assert false;
+				}
+			}
+		}
+	}
+	
 	private State transfor(State origin, ProductionToken symbol) {
 		
 		State target = null;
@@ -162,6 +208,10 @@ public class LrAutomata {
 		return null;
 	}
 	
+	private State nextState (State origin, ProductionToken symbol) {
+		return this.gotoTable.nextState(origin, symbol);
+	}
+	
 	private State closure(State state) {
 //		return state;
 //		System.out.println("before: " + state);
@@ -182,6 +232,10 @@ public class LrAutomata {
 		
 //		System.out.println("closure:" + state + "\n");
 		return state;
+	}
+	
+	private List<ProductionToken> follow(ProductionToken symbol) {
+		return new ArrayList<ProductionToken>();
 	}
 	
 	private void initInputQueue(String input){
@@ -314,7 +368,9 @@ class State {
 
 
 enum Action {
-	SHIFT, REDUCE, ACCEPT, ERROR
+	SHIFT, REDUCE, ACCEPT, ERROR;
+	public State shiftTo;
+	public Production reduce;
 }
 
 class GotoTable extends Table{
@@ -389,8 +445,32 @@ class GotoTable extends Table{
 	
 }
 
-class ActionTable extends Table{
+class ActionTable {
+	protected Map<State, Map<ProductionToken, Action>> impl;
 	
+	public ActionTable() {
+		this.impl = new HashMap<State, Map<ProductionToken, Action>>();
+	}
+	
+	public void update(State state, ProductionToken symbol, Action action) {
+		if (!this.impl.containsKey(state)) {
+			this.impl.put(state, new HashMap<ProductionToken, Action>() );
+		} 
+		
+		Map<ProductionToken, Action> secondaryMap = this.impl.get(state);
+		
+		if (secondaryMap != null) {
+			if (secondaryMap.get(symbol) == null) {
+				secondaryMap.put(symbol, action);
+			} else {
+				// Should not get here.
+				assert false;
+			}
+		} else {
+			// Should not get here.
+			assert false;
+		}
+	}
 }
 
 class Table {
