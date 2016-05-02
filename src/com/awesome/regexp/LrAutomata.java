@@ -240,7 +240,37 @@ public class LrAutomata {
 			followSet.add(new ProductionToken("$", true));
 		}
 		
-		// 
+		for (Production prod : this.grammar.productions) {
+			
+			ProductionToken nextSymbol = getOneSymbolNextToAnother(prod, symbol);
+			
+			if (nextSymbol != null) {
+				// 2. If there is a production A -> aBb, then everything in FIRST(b) except epsilon is in FOLLOW(B).
+				List<ProductionToken> firstB = first(nextSymbol);
+				
+				for (ProductionToken firstBItem : firstB) {
+					ProductionToken epsilon = new ProductionToken("EPSILON", true);
+					if (!firstBItem.equals(epsilon)) {
+						followSet.add(firstBItem);
+					} else {
+						// 3. A production A -> aBb, where FIRST(b) contains epsilon, then everything in FOLLOW(A) is in FOLLOW(B).
+						List<ProductionToken> followA = follow(prod.head);
+						
+						for (ProductionToken followAItem : followA) {
+							followSet.add(followAItem);
+						}
+					}
+				}
+			} else {
+				// 3. If there is a production A -> aB, where FIRST(b) contains epsilon, then everything in FOLLOW(A) is in FOLLOW(B).
+				List<ProductionToken> followA = follow(prod.head);
+				
+				for (ProductionToken followAItem : followA) {
+					followSet.add(followAItem);
+				}
+			}
+			
+		}
 		return followSet;
 	}
 	
@@ -267,10 +297,22 @@ public class LrAutomata {
 	private ProductionToken getSymbolNextToDot(Production production) {
 		ProductionToken dotSymbol = new ProductionToken("DOT", true);
 		dotSymbol.isDotSymbol = true;
-		
+//		
+//		List<ProductionToken> body = production.body;
+//		
+//		int indexOfDot = body.indexOf(dotSymbol);
+//		if (indexOfDot < body.size() - 1) {
+//			return body.get(indexOfDot + 1);
+//		} else {
+//			return null;
+//		}
+		return getOneSymbolNextToAnother(production, dotSymbol);
+	}
+	
+	private ProductionToken getOneSymbolNextToAnother(Production production, ProductionToken symbol) {
 		List<ProductionToken> body = production.body;
 		
-		int indexOfDot = body.indexOf(dotSymbol);
+		int indexOfDot = body.indexOf(symbol);
 		if (indexOfDot < body.size() - 1) {
 			return body.get(indexOfDot + 1);
 		} else {
