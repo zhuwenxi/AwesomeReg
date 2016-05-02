@@ -45,9 +45,7 @@ public class LrAutomata {
 		constructActionTable();
 		
 //		printStates();
-		System.out.println(this.gotoTable);
-//		System.out.println(this.states);
-//		System.out.println(this.states.size());
+//		System.out.println(this.gotoTable);
 	}
 	
 	public AbstractSyntaxTree parse(String input) {
@@ -235,6 +233,18 @@ public class LrAutomata {
 	}
 	
 	private List<ProductionToken> follow(ProductionToken symbol) {
+		List<ProductionToken> followSet = new ArrayList<ProductionToken>();
+		
+		// 1. Place $ in FOLLOW(S), where S is the start symbol, and $ is the input right mark.
+		if (symbol.isNonTerminal) {
+			followSet.add(new ProductionToken("$", true));
+		}
+		
+		// 
+		return followSet;
+	}
+	
+	private List<ProductionToken> first(ProductionToken symbol) {
 		return new ArrayList<ProductionToken>();
 	}
 	
