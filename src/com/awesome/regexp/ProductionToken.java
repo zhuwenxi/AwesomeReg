@@ -50,7 +50,7 @@ public class ProductionToken {
 		if (o == null) {
 			return false;
 		}
-		return this.isTerminal == that.isTerminal && this.isNonTerminal == that.isNonTerminal && this.isCollection == that.isCollection && this.isDotSymbol == this.isDotSymbol && this.text.equals(that.text);
+		return this.isTerminal == that.isTerminal && this.isNonTerminal == that.isNonTerminal && this.isCollection == that.isCollection && this.isDotSymbol == that.isDotSymbol && this.text.equals(that.text);
 	}
 	
 }
