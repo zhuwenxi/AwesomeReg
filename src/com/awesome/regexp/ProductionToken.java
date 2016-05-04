@@ -16,7 +16,20 @@ public class ProductionToken {
 	
 	public List<Character> collection;
 	
+	static public final ProductionToken epsilon;
 	
+	static public final ProductionToken dollar;
+	
+	static public final ProductionToken dot;
+	
+	static {
+		epsilon = new ProductionToken ("EPSILON", true);
+		
+		dollar = new ProductionToken ("$", true);
+		
+		dot = new ProductionToken("DOT", true);
+		dot.isDotSymbol = true;
+	}
 	
 	
 	public ProductionToken(){
@@ -35,6 +48,7 @@ public class ProductionToken {
 		this();
 		this.text = text;
 		this.isTerminal = isTerminal;
+		this.isNonTerminal = !isTerminal;
 	}
 	
 	@Override

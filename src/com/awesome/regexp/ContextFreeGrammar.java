@@ -39,4 +39,13 @@ public class ContextFreeGrammar {
 	public boolean equals(Object o) {
 		return true;
 	}
+	
+	@Override 
+	public Object clone() {
+		ContextFreeGrammar cloneObj = new ContextFreeGrammar();
+		for (Production prod : this.productions) {
+			cloneObj.productions.add(prod.clone());
+		}
+		return cloneObj;
+	}
 }

@@ -49,7 +49,7 @@ public class Regexp {
 		//
 		// Generate AST:
 		//
-		this.ast = this.lrAutomata.parse(regexpString);
+//		this.ast = this.lrAutomata.parse(regexpString);
 		
 	}
 	
