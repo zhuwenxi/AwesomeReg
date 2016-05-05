@@ -25,11 +25,15 @@ public class LrAutomata {
 	private GotoTable gotoTable;
 
 	private List<ProductionToken> symbols;
+	
+	private Stack<ProductionToken> traceFirstFunc;
 
 	public LrAutomata() {
 		this.stateStack = new Stack<State>();
 		this.gotoTable = new GotoTable();
 		this.actionTable = new ActionTable();
+		
+		this.traceFirstFunc = new Stack<ProductionToken>();
 	}
 
 	public LrAutomata(ContextFreeGrammar grammar) {
@@ -47,8 +51,9 @@ public class LrAutomata {
 
 		constructActionTable();
 		
+//		System.out.println("======================== action table ==========================\n");
 //		System.out.println(this.actionTable);
-
+//		System.out.println("======================== states ==========================\n");
 //		printStates();
 //		System.out.println(this.gotoTable);
 	}
@@ -142,11 +147,9 @@ public class LrAutomata {
 
 				Action action = null;
 				
-//				System.out.println(prod);
-				
 				if (indexOfDot == prod.body.size() - 1) {
-
-					if (prod.equals(this.states.get(0).getProductions().get(0))) {
+//					System.out.println("~~~~~~~~~~~~" + prod + "\n");
+					if (prod.head.text.equals("Regexp'")) {
 						// state contains the production "Regexp' -> Regexp DOT"
 						action = Action.ACCEPT;
 						ProductionToken dollarSymbol = ProductionToken.dollar;
@@ -155,12 +158,16 @@ public class LrAutomata {
 					} else {
 						List<ProductionToken> followSet = follow(prod.head);
 						
+//						System.out.println("===================");
 						for (ProductionToken symbol : followSet) {
 							action = Action.REDUCE;
 							action.reduce = prod;
 							
+//							System.out.println(symbol);
+							
 							this.actionTable.update(state, symbol, action);
 						}
+//						System.out.println("===================");
 					}
 
 				} else if (indexOfDot >= 0 && indexOfDot < prod.body.size() - 1) {
@@ -171,6 +178,8 @@ public class LrAutomata {
 
 						action = Action.SHIFT;
 						action.shiftTo = shiftTo;
+						
+						this.actionTable.update(state, symbolNextToDot, action);
 					}
 				}
 			}
@@ -238,30 +247,34 @@ public class LrAutomata {
 	}
 
 	private List<ProductionToken> follow(ProductionToken symbol) {
-		System.out.println("follow():\nsymbol:" + symbol);
+//		System.out.println("follow():\nsymbol:" + symbol);
 		List<ProductionToken> followSet = new ArrayList<ProductionToken>();
 
 		// 1. Place $ in FOLLOW(S), where S is the start symbol, and $ is the
 		// input right mark.
 		if (symbol.isNonTerminal) {
-			followSet.add(ProductionToken.dollar);
+			if (!followSet.contains(ProductionToken.dollar)) {
+				followSet.add(ProductionToken.dollar);
+			}
 		}
 
 		for (Production prod : this.originGrammar.productions) {
 
 			ProductionToken nextSymbol = getOneSymbolNextToAnother(prod, symbol);
-			System.out.println(this.originGrammar);
-			System.out.println("next symbol: " + nextSymbol);
+//			System.out.println(this.originGrammar);
+//			System.out.println("next symbol: " + nextSymbol);
 			if (nextSymbol != null) {
 				// 2. If there is a production A -> aBb, then everything in
 				// FIRST(b) except epsilon is in FOLLOW(B).
 				List<ProductionToken> firstB = first(nextSymbol);
-				System.out.println("firstB:\n" + firstB);
+//				System.out.println("firstB:\n" + firstB);
 				for (ProductionToken firstBItem : firstB) {
 					ProductionToken epsilon = ProductionToken.epsilon;
 					
 					if (!firstBItem.equals(epsilon)) {
-						followSet.add(firstBItem);
+						if (!followSet.contains(firstBItem)) {
+							followSet.add(firstBItem);
+						}
 					} else {
 						// 3. A production A -> aBb, where FIRST(b) contains
 						// epsilon, then everything in FOLLOW(A) is in
@@ -269,7 +282,9 @@ public class LrAutomata {
 						List<ProductionToken> followA = follow(prod.head);
 
 						for (ProductionToken followAItem : followA) {
-							followSet.add(followAItem);
+							if (!followSet.contains(followAItem)) {
+								followSet.add(followAItem);
+							}
 						}
 					}
 				}
@@ -279,23 +294,34 @@ public class LrAutomata {
 				List<ProductionToken> followA = follow(prod.head);
 
 				for (ProductionToken followAItem : followA) {
-					followSet.add(followAItem);
+					if (!followSet.contains(followAItem)) {
+						followSet.add(followAItem);
+					}
 				}
 			}
 
 		}
 		
-		System.out.println("follow(symbol): \n" + followSet);
+//		System.out.println("follow(symbol): \n" + followSet);
 		return followSet;
 	}
 
 	private List<ProductionToken> first(ProductionToken symbol) {
-		System.out.println("first():\nsymbol: " + symbol);
+//		System.out.println("first():\nsymbol: " + symbol);
 		List<ProductionToken> firstSet = new ArrayList<ProductionToken>();
+		
+		if (this.traceFirstFunc.contains(symbol)) {
+			return firstSet;
+		} else {
+			this.traceFirstFunc.push(symbol);
+		}
 		
 		if (symbol.isTerminal) {
 			// symbol is a terminal.
-			firstSet.add(symbol);
+			if (!firstSet.contains(symbol)) {
+				firstSet.add(symbol);
+			}
+			
 		} else {
 			// symbol is a non-terminal.
 			
@@ -311,7 +337,10 @@ public class LrAutomata {
 						List<ProductionToken> firstY = first(symbolY);
 								
 						for (ProductionToken symbolYItem : firstY) {
-							firstSet.add(symbolYItem);
+							if (!firstSet.contains(symbolYItem)) {
+								firstSet.add(symbolYItem);
+							}
+							
 						}
 						
 						ProductionToken epsilon = ProductionToken.epsilon;
@@ -322,6 +351,8 @@ public class LrAutomata {
 				}
 			}
 		}
+		
+		this.traceFirstFunc.pop();
 		
 		return firstSet;
 	}
@@ -585,6 +616,7 @@ class ActionTable {
 			} else {
 				// Should not get here.
 				assert false;
+				throw new RuntimeException("conflict action.");
 			}
 		} else {
 			// Should not get here.
