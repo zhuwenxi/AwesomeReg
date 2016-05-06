@@ -56,6 +56,8 @@ public class LrAutomata {
 //		System.out.println("======================== states ==========================\n");
 //		printStates();
 //		System.out.println(this.gotoTable);
+		
+		System.out.println(follow(new ProductionToken("Regexp", false)));
 	}
 
 	public AbstractSyntaxTree parse(String input) {
