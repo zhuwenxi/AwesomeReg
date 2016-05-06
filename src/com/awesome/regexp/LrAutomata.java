@@ -541,8 +541,7 @@ class GotoTable extends Table {
 			if (secondaryMap.get(symbol) == null) {
 				secondaryMap.put(symbol, target);
 			} else {
-				// Should not get here.
-				assert false;
+//				assert false;
 			}
 		} else {
 			// Should not get here.
@@ -615,8 +614,16 @@ class ActionTable {
 				secondaryMap.put(symbol, action);
 			} else {
 				// Should not get here.
-				assert false;
-				throw new RuntimeException("conflict action.");
+//				assert false;
+				System.out.println("======================== Meet a conflict in actionTable =======================");
+				System.out.println("state:");
+				System.out.println(state);
+				System.out.println("symbol;");
+				System.out.println(symbol);
+				System.out.println("Origin action:");
+				System.out.println(secondaryMap.get(symbol));
+				System.out.println("Current action:");
+				System.out.println(action);
 			}
 		} else {
 			// Should not get here.
