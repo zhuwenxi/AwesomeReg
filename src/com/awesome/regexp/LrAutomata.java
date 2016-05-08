@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Stack;
 
 public class LrAutomata {
@@ -18,7 +19,7 @@ public class LrAutomata {
 
 	private Stack<State> stateStack;
 
-	private LinkedList<Character> inputQueue;
+	private LinkedList<Symbol> inputQueue;
 
 	private ActionTable actionTable;
 
@@ -61,13 +62,42 @@ public class LrAutomata {
 	}
 
 	public AbstractSyntaxTree parse(String input) {
-		initInputQueue(input);
+		this.inputQueue = initInputQueue(input);
 		this.stateStack.push(this.states.get(0));
 		Action action = null;
+		
+		// Let a be the first symbol of input symbol queue.
+		Symbol next = inputQueue.poll();
 
-		while (action != null && action != Action.ERROR) {
+		while (true /*action != Action.ACCEPT && action != Action.ERROR*/) {
 			State state = this.stateStack.peek();
-			action = action(state, null);
+			action = action(state, next.type);
+			
+			if (action == Action.SHIFT) {
+				State shiftTo = action.shiftTo;
+				this.stateStack.push(shiftTo);
+				
+				next = inputQueue.poll();
+				
+			} else if (action == Action.REDUCE) {
+				Production prodToReduce = action.reduce.clone();
+				
+				for (int i = prodToReduce.body.size() - 1; i >= 0 ; i --) {
+					ProductionToken lastProductionToken = prodToReduce.body.remove(i);
+					Symbol symbol = this.inputQueue.pop();
+					assert(symbol.type == lastProductionToken);
+				}
+				
+				State topState = this.stateStack.pop();
+				this.stateStack.push(this.gotoTable.nextState(topState, prodToReduce.head));
+				
+				// Output thr production A -> B
+			} else if (action == Action.ACCEPT) {
+				break;
+			} else if (action == Action.ERROR) {
+				// Call error-recovery routine.
+				break;
+			}
 		}
 
 		return null;
@@ -361,8 +391,8 @@ public class LrAutomata {
 		return firstSet;
 	}
 
-	private void initInputQueue(String input) {
-		
+	private LinkedList<Symbol> initInputQueue(String input) {
+		return null;
 	}
 
 	private ContextFreeGrammar addDotPrefix(ContextFreeGrammar grammar) {
@@ -673,4 +703,21 @@ class Table {
 		this.tableImpl = new HashMap<State, Map<ProductionToken, State>>();
 	}
 
+}
+
+class Symbol {
+	public char face;
+	
+	public ProductionToken type;
+	
+	public Symbol() {
+		
+	}
+	
+	public Symbol(char face, ProductionToken type) {
+		this.face = face;
+		this.type = type;
+	}
+	
+	 
 }
