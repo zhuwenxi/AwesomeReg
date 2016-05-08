@@ -51,13 +51,13 @@ public class LrAutomata {
 
 		constructActionTable();
 		
-//		System.out.println("======================== action table ==========================\n");
-//		System.out.println(this.actionTable);
+		System.out.println("======================== action table ==========================\n");
+		System.out.println(this.actionTable);
 //		System.out.println("======================== states ==========================\n");
 //		printStates();
 //		System.out.println(this.gotoTable);
 		
-		System.out.println(follow(new ProductionToken("Regexp", false)));
+//		System.out.println(follow(new ProductionToken("Regexp", false)));
 	}
 
 	public AbstractSyntaxTree parse(String input) {
@@ -262,45 +262,47 @@ public class LrAutomata {
 
 		for (Production prod : this.originGrammar.productions) {
 
-			ProductionToken nextSymbol = getOneSymbolNextToAnother(prod, symbol);
-//			System.out.println(this.originGrammar);
-//			System.out.println("next symbol: " + nextSymbol);
-			if (nextSymbol != null) {
-				// 2. If there is a production A -> aBb, then everything in
-				// FIRST(b) except epsilon is in FOLLOW(B).
-				List<ProductionToken> firstB = first(nextSymbol);
-//				System.out.println("firstB:\n" + firstB);
-				for (ProductionToken firstBItem : firstB) {
-					ProductionToken epsilon = ProductionToken.epsilon;
-					
-					if (!firstBItem.equals(epsilon)) {
-						if (!followSet.contains(firstBItem)) {
-							followSet.add(firstBItem);
-						}
-					} else {
-						// 3. A production A -> aBb, where FIRST(b) contains
-						// epsilon, then everything in FOLLOW(A) is in
-						// FOLLOW(B).
-						List<ProductionToken> followA = follow(prod.head);
+			if (prod.body.contains(symbol)) {
+				ProductionToken nextSymbol = getOneSymbolNextToAnother(prod, symbol);
+				
+				if (nextSymbol != null) {
+					// 2. If there is a production A -> aBb, then everything in
+					// FIRST(b) except epsilon is in FOLLOW(B).
+					List<ProductionToken> firstB = first(nextSymbol);
+//					System.out.println("firstB:\n" + firstB);
+					for (ProductionToken firstBItem : firstB) {
+						ProductionToken epsilon = ProductionToken.epsilon;
+						
+						if (!firstBItem.equals(epsilon)) {
+							if (!followSet.contains(firstBItem)) {
+								followSet.add(firstBItem);
+							}
+						} else {
+							// 3. A production A -> aBb, where FIRST(b) contains
+							// epsilon, then everything in FOLLOW(A) is in
+							// FOLLOW(B).
+							List<ProductionToken> followA = follow(prod.head);
 
-						for (ProductionToken followAItem : followA) {
-							if (!followSet.contains(followAItem)) {
-								followSet.add(followAItem);
+							for (ProductionToken followAItem : followA) {
+								if (!followSet.contains(followAItem)) {
+									followSet.add(followAItem);
+								}
 							}
 						}
 					}
-				}
-			} else {
-				// 3. If there is a production A -> aB, where FIRST(b) contains
-				// epsilon, then everything in FOLLOW(A) is in FOLLOW(B).
-				List<ProductionToken> followA = follow(prod.head);
+				} else {
+					// 3. If there is a production A -> aB, where FIRST(b) contains
+					// epsilon, then everything in FOLLOW(A) is in FOLLOW(B).
+					List<ProductionToken> followA = follow(prod.head);
 
-				for (ProductionToken followAItem : followA) {
-					if (!followSet.contains(followAItem)) {
-						followSet.add(followAItem);
+					for (ProductionToken followAItem : followA) {
+						if (!followSet.contains(followAItem)) {
+							followSet.add(followAItem);
+						}
 					}
 				}
 			}
+			
 
 		}
 		
@@ -393,7 +395,7 @@ public class LrAutomata {
 		List<ProductionToken> body = production.body;
 
 		int indexOfDot = body.indexOf(symbol);
-		if (indexOfDot < body.size() - 1) {
+		if (indexOfDot < body.size() - 1 && indexOfDot >= 0) {
 			return body.get(indexOfDot + 1);
 		} else {
 			return null;
