@@ -85,7 +85,7 @@ public class LrAutomata {
 				for (int i = prodToReduce.body.size() - 1; i >= 0 ; i --) {
 					ProductionToken lastProductionToken = prodToReduce.body.remove(i);
 					Symbol symbol = this.inputQueue.pop();
-					assert(symbol.type == lastProductionToken);
+					assert symbol.type == lastProductionToken;
 				}
 				
 				State topState = this.stateStack.pop();
@@ -392,6 +392,14 @@ public class LrAutomata {
 	}
 
 	private LinkedList<Symbol> initInputQueue(String input) {
+		this.inputQueue = new LinkedList<Symbol>();
+		
+		for (int i = 0; i < input.length(); i ++) {
+			char ch = input.charAt(i);
+			
+			
+		}
+		
 		return null;
 	}
 
