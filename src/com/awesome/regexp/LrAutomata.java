@@ -19,7 +19,7 @@ public class LrAutomata {
 
 	private Stack<State> stateStack;
 
-	private LinkedList<Symbol> inputQueue;
+	private LinkedList<InputSymbol> inputQueue;
 
 	private ActionTable actionTable;
 
@@ -52,8 +52,8 @@ public class LrAutomata {
 
 		constructActionTable();
 		
-		System.out.println("======================== action table ==========================\n");
-		System.out.println(this.actionTable);
+//		System.out.println("======================== action table ==========================\n");
+//		System.out.println(this.actionTable);
 //		System.out.println("======================== states ==========================\n");
 //		printStates();
 //		System.out.println(this.gotoTable);
@@ -64,14 +64,20 @@ public class LrAutomata {
 	public AbstractSyntaxTree parse(String input) {
 		this.inputQueue = initInputQueue(input);
 		this.stateStack.push(this.states.get(0));
+		
+		Stack<InputSymbol> symbolStack = new Stack<InputSymbol>();
+		
 		Action action = null;
 		
 		// Let a be the first symbol of input symbol queue.
-		Symbol next = inputQueue.poll();
+		InputSymbol next = inputQueue.poll();
 
 		while (true /*action != Action.ACCEPT && action != Action.ERROR*/) {
 			State state = this.stateStack.peek();
-			action = action(state, next.type);
+			
+			action = this.actionTable.nextAction(state, next.type);
+			
+			assert action != null;
 			
 			if (action == Action.SHIFT) {
 				State shiftTo = action.shiftTo;
@@ -79,17 +85,28 @@ public class LrAutomata {
 				
 				next = inputQueue.poll();
 				
+				symbolStack.push(next);
+				
+				System.out.println(symbolStack);
+				
 			} else if (action == Action.REDUCE) {
-				Production prodToReduce = action.reduce.clone();
+				Production prodToReduce = action.reduce;
 				
 				for (int i = prodToReduce.body.size() - 1; i >= 0 ; i --) {
-					ProductionToken lastProductionToken = prodToReduce.body.remove(i);
-					Symbol symbol = this.inputQueue.pop();
-					assert symbol.type == lastProductionToken;
+					ProductionToken lastProductionToken = prodToReduce.body.get(i);
+//					Symbol symbol = this.inputQueue.pop();
+//					assert symbol.type == lastProductionToken;
+					this.stateStack.pop();
+					
+					symbolStack.pop();
 				}
 				
-				State topState = this.stateStack.pop();
+				State topState = this.stateStack.peek();
 				this.stateStack.push(this.gotoTable.nextState(topState, prodToReduce.head));
+				
+				symbolStack.push(new InputSymbol(prodToReduce.head.text, prodToReduce.head));
+				
+				System.out.println(symbolStack);
 				
 				// Output thr production A -> B
 			} else if (action == Action.ACCEPT) {
@@ -391,14 +408,16 @@ public class LrAutomata {
 		return firstSet;
 	}
 
-	private LinkedList<Symbol> initInputQueue(String input) {
-		this.inputQueue = new LinkedList<Symbol>();
+	private LinkedList<InputSymbol> initInputQueue(String input) {
+		this.inputQueue = new LinkedList<InputSymbol>();
 		
 		for (int i = 0; i < input.length(); i ++) {
 			char ch = input.charAt(i);
 			
-			
+			this.inputQueue.add(new InputSymbol(ch, ProductionToken.ch));
 		}
+		
+		this.inputQueue.add(new InputSymbol(ProductionToken.dollar.text, ProductionToken.dollar));
 		
 		return null;
 	}
@@ -673,6 +692,18 @@ class ActionTable {
 		}
 	}
 	
+	public Action nextAction(State state, ProductionToken symbol) {
+		Map<ProductionToken, Action> secondaryMap = this.impl.get(state);
+
+		if (secondaryMap != null) {
+			return secondaryMap.get(symbol);
+		} else {
+			// Should not get here.
+			assert false;
+			return null;
+		}
+	}
+	
 	@Override
 	public String toString() {
 		String retStr = "";
@@ -713,19 +744,27 @@ class Table {
 
 }
 
-class Symbol {
-	public char face;
+class InputSymbol {
+	public String face;
 	
 	public ProductionToken type;
 	
-	public Symbol() {
+	public InputSymbol() {
 		
 	}
 	
-	public Symbol(char face, ProductionToken type) {
-		this.face = face;
-		this.type = type;
+	public InputSymbol(char ch, ProductionToken symbolType) {
+		this.face = Character.toString(ch);
+		this.type = symbolType;
 	}
 	
-	 
+	public InputSymbol(String face, ProductionToken symbolType) {
+		this.face = face;
+		this.type = symbolType;
+	}
+	
+	@Override
+	public String toString() {
+		return face;
+	}
 }

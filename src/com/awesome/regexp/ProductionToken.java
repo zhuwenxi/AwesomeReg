@@ -1,5 +1,6 @@
 package com.awesome.regexp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductionToken {
@@ -22,6 +23,8 @@ public class ProductionToken {
 	
 	static public final ProductionToken dot;
 	
+	static public final ProductionToken ch;
+	
 	static {
 		epsilon = new ProductionToken ("EPSILON", true);
 		
@@ -29,6 +32,23 @@ public class ProductionToken {
 		
 		dot = new ProductionToken("DOT", true);
 		dot.isDotSymbol = true;
+		
+		ch = new ProductionToken("[0-1a-zA-Z]");
+		
+		ch.isCollection = true;
+		ch.collection = new ArrayList<Character>();
+		
+		for (char c = '0'; c <= '9'; c++){
+			ch.collection.add(c);
+		}
+		
+		for (char c = 'a'; c <= 'z'; c++){
+			ch.collection.add(c);
+		}
+		
+		for (char c = 'A'; c <= 'Z'; c++){
+			ch.collection.add(c);
+		}
 	}
 	
 	
