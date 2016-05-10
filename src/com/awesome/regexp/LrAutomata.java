@@ -419,7 +419,7 @@ public class LrAutomata {
 		
 		this.inputQueue.add(new InputSymbol(ProductionToken.dollar.text, ProductionToken.dollar));
 		
-		return null;
+		return inputQueue;
 	}
 
 	private ContextFreeGrammar addDotPrefix(ContextFreeGrammar grammar) {
