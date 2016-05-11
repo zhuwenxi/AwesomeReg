@@ -87,4 +87,16 @@ public class ProductionToken {
 		return this.isTerminal == that.isTerminal && this.isNonTerminal == that.isNonTerminal && this.isCollection == that.isCollection && this.isDotSymbol == that.isDotSymbol && this.text.equals(that.text);
 	}
 	
+	@Override
+	public int hashCode() {
+		int hashCode = 0;
+			
+		for (int i = 0; i < this.text.length(); i ++) {
+			char ch = this.text.charAt(i);
+			hashCode += (10 * hashCode + ch); 
+		}
+		
+		return hashCode;
+	}
+	
 }

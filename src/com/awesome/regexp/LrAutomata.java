@@ -188,6 +188,7 @@ public class LrAutomata {
 
 	private void constructActionTable() {
 		for (State state : this.states) {
+			System.out.println("state:\n" + state);
 			for (Production prod : state.getProductions()) {
 
 				ProductionToken dotSymbol = ProductionToken.dot;
@@ -221,14 +222,20 @@ public class LrAutomata {
 
 				} else if (indexOfDot >= 0 && indexOfDot < prod.body.size() - 1) {
 					ProductionToken symbolNextToDot = getSymbolNextToDot(prod);
-
+					
+					System.out.println("symbolNextToDot:\n" + symbolNextToDot + "\n========================\n");
+	
 					if (symbolNextToDot.isTerminal == true) {
 						State shiftTo = nextState(state, symbolNextToDot);
-
+						
 						action = Action.SHIFT;
 						action.shiftTo = shiftTo;
 						
 						this.actionTable.update(state, symbolNextToDot, action);
+						
+						if (symbolNextToDot.text.equals("[0-1a-zA-Z]")) {
+							assert symbolNextToDot.equals(ProductionToken.ch);
+						}
 					}
 				}
 			}
@@ -263,10 +270,6 @@ public class LrAutomata {
 		}
 
 		return target;
-	}
-
-	private Action action(State state, ProductionToken symbol) {
-		return null;
 	}
 
 	private State nextState(State origin, ProductionToken symbol) {
@@ -664,6 +667,8 @@ class ActionTable {
 	}
 
 	public void update(State state, ProductionToken symbol, Action action) {
+		assert action != null;
+		
 		if (!this.impl.containsKey(state)) {
 			this.impl.put(state, new HashMap<ProductionToken, Action>());
 		}
@@ -696,6 +701,13 @@ class ActionTable {
 		Map<ProductionToken, Action> secondaryMap = this.impl.get(state);
 
 		if (secondaryMap != null) {
+//			for (ProductionToken key : secondaryMap.keySet()) {
+//				assert key.equals(symbol);
+//				assert key.hashCode() == symbol.hashCode();
+//				assert secondaryMap.containsKey(symbol);
+//			}
+//			assert secondaryMap.keySet().contains(symbol);
+//			assert secondaryMap.containsKey(symbol);
 			return secondaryMap.get(symbol);
 		} else {
 			// Should not get here.
