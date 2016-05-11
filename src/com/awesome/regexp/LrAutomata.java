@@ -28,6 +28,8 @@ public class LrAutomata {
 	private List<ProductionToken> symbols;
 	
 	private Stack<ProductionToken> traceFirstFunc;
+	
+	private int reduceCount;
 
 	public LrAutomata() {
 		this.stateStack = new Stack<State>();
@@ -52,8 +54,8 @@ public class LrAutomata {
 
 		constructActionTable();
 		
-//		System.out.println("======================== action table ==========================\n");
-//		System.out.println(this.actionTable);
+		System.out.println("======================== action table ==========================\n");
+		System.out.println(this.actionTable);
 //		System.out.println("======================== states ==========================\n");
 //		printStates();
 //		System.out.println(this.gotoTable);
@@ -79,7 +81,7 @@ public class LrAutomata {
 			
 			assert action != null;
 			
-			if (action == Action.SHIFT) {
+			if (action.shift) {
 				State shiftTo = action.shiftTo;
 				this.stateStack.push(shiftTo);
 				
@@ -89,10 +91,10 @@ public class LrAutomata {
 				
 				System.out.println(symbolStack);
 				
-			} else if (action == Action.REDUCE) {
-				Production prodToReduce = action.reduce;
+			} else if (action.reduce) {
+				Production prodToReduce = action.prodToReduce;
 				
-				for (int i = prodToReduce.body.size() - 1; i >= 0 ; i --) {
+				for (int i = prodToReduce.body.size() - 2; i >= 0 ; i --) {
 					ProductionToken lastProductionToken = prodToReduce.body.get(i);
 //					Symbol symbol = this.inputQueue.pop();
 //					assert symbol.type == lastProductionToken;
@@ -109,9 +111,9 @@ public class LrAutomata {
 				System.out.println(symbolStack);
 				
 				// Output thr production A -> B
-			} else if (action == Action.ACCEPT) {
+			} else if (action.accept) {
 				break;
-			} else if (action == Action.ERROR) {
+			} else if (action.error) {
 				// Call error-recovery routine.
 				break;
 			}
@@ -188,7 +190,7 @@ public class LrAutomata {
 
 	private void constructActionTable() {
 		for (State state : this.states) {
-			System.out.println("state:\n" + state);
+			
 			for (Production prod : state.getProductions()) {
 
 				ProductionToken dotSymbol = ProductionToken.dot;
@@ -201,45 +203,54 @@ public class LrAutomata {
 //					System.out.println("~~~~~~~~~~~~" + prod + "\n");
 					if (prod.head.text.equals("Regexp'")) {
 						// state contains the production "Regexp' -> Regexp DOT"
-						action = Action.ACCEPT;
+						action = new Action("ACCEPT");
 						ProductionToken dollarSymbol = ProductionToken.dollar;
 
 						this.actionTable.update(state, dollarSymbol, action);
 					} else {
 						List<ProductionToken> followSet = follow(prod.head);
 						
-//						System.out.println("===================");
+						System.out.println("state:\n" + state);
 						for (ProductionToken symbol : followSet) {
-							action = Action.REDUCE;
-							action.reduce = prod;
+							action = new Action("REDUCE");
+							action.prodToReduce = prod;
 							
-//							System.out.println(symbol);
 							
+							System.out.println("symbol: " + symbol);
+//							System.out.println("reduce to: \n" + prod);
 							this.actionTable.update(state, symbol, action);
+							System.out.println("action.reduce: \n" + action.reduce);
+							
+							
+//							System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~ action table ~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+//							System.out.println(this.actionTable);
+//							System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+							
 						}
-//						System.out.println("===================");
+						System.out.println("===================");
 					}
 
 				} else if (indexOfDot >= 0 && indexOfDot < prod.body.size() - 1) {
 					ProductionToken symbolNextToDot = getSymbolNextToDot(prod);
 					
-					System.out.println("symbolNextToDot:\n" + symbolNextToDot + "\n========================\n");
+//					System.out.println("symbolNextToDot:\n" + symbolNextToDot + "\n========================\n");
 	
 					if (symbolNextToDot.isTerminal == true) {
 						State shiftTo = nextState(state, symbolNextToDot);
 						
-						action = Action.SHIFT;
+						action = new Action("SHIFT");
 						action.shiftTo = shiftTo;
 						
 						this.actionTable.update(state, symbolNextToDot, action);
 						
-						if (symbolNextToDot.text.equals("[0-1a-zA-Z]")) {
-							assert symbolNextToDot.equals(ProductionToken.ch);
-						}
 					}
 				}
 			}
 		}
+		
+		System.out.println("reduce count: " + this.reduceCount);
+//		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~ action table ~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+//		System.out.println(this.actionTable);
 	}
 
 	private State transfor(State origin, ProductionToken symbol) {
@@ -555,34 +566,65 @@ class State {
 
 		return cloneState;
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.items.hashCode();
+//		return 100;
+	}
 }
 
-enum Action {
-	SHIFT, REDUCE, ACCEPT, ERROR;
+class Action {
+	public boolean shift;
+	public boolean reduce; 
+	public boolean accept; 
+	public boolean error;
+	
 	public State shiftTo;
-	public Production reduce;
+	public Production prodToReduce;
+	
+	public Action() {
+		this.shift = false;
+		this.reduce = false;
+		this.accept = false;
+		this.error = false;
+	}
+	
+	public Action(String action) {
+		action = action.toUpperCase();
+		
+		switch(action) {
+		case "SHIFT":
+			this.shift = true;
+			break;
+		case "REDUCE":
+			this.reduce = true;
+			break;
+		case "ACCEPT":
+			this.accept = true;
+			break;
+		case "ERROR":
+			this.error = true;
+			break;
+		}
+	}
 	
 	@Override
 	public String toString() {
 		String ret = new String();
 		
-		switch (this) {
-		case SHIFT:
+		if (this.shift) {
 			ret += "SHIFT:\n";
 			ret += shiftTo.toString();
-			break;
-		case REDUCE:
+		} else if (this.reduce){
 			ret += "REDUCE:\n";
-			ret += reduce.toString();
-			break;
-		case ACCEPT:
+			ret += prodToReduce.toString();
+		} else if (this.accept) {
 			ret += "ACCEPT:\n";
-			break;
-		case ERROR:
+		} else if (this.error) {
 			ret += "ERROR:\n";
-			break;
-		default:
-			break;
+		} else {
+			assert false;
 		}
 		return ret;
 	}
@@ -669,6 +711,15 @@ class ActionTable {
 	public void update(State state, ProductionToken symbol, Action action) {
 		assert action != null;
 		
+//		if (action == Action.REDUCE) {
+//			System.out.println("++++++++++++++++++++++++++++++");
+//			System.out.println("update():");
+//			System.out.println(state);
+//			System.out.println(symbol);
+//			System.out.println(action);
+//			System.out.println("++++++++++++++++++++++++++++++");
+//		}
+		
 		if (!this.impl.containsKey(state)) {
 			this.impl.put(state, new HashMap<ProductionToken, Action>());
 		}
@@ -680,7 +731,7 @@ class ActionTable {
 				secondaryMap.put(symbol, action);
 			} else {
 				// Should not get here.
-//				assert false;
+				assert false;
 				System.out.println("======================== Meet a conflict in actionTable =======================");
 				System.out.println("state:");
 				System.out.println(state);

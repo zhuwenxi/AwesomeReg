@@ -89,14 +89,15 @@ public class ProductionToken {
 	
 	@Override
 	public int hashCode() {
-		int hashCode = 0;
-			
-		for (int i = 0; i < this.text.length(); i ++) {
-			char ch = this.text.charAt(i);
-			hashCode += (10 * hashCode + ch); 
-		}
-		
-		return hashCode;
+//		int hashCode = 0;
+//			
+//		for (int i = 0; i < this.text.length(); i ++) {
+//			char ch = this.text.charAt(i);
+//			hashCode += (10 * hashCode + ch); 
+//		}
+//		
+//		return hashCode;
+		return this.text.hashCode();
 	}
 	
 }

@@ -146,6 +146,11 @@ public class Production {
 		
 		return this.head.equals(that.head) && this.body.equals(that.body);
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.head.hashCode() + this.body.hashCode();
+	}
 }
 
 //enum State {
