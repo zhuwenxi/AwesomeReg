@@ -77,7 +77,7 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		
 		body = new ArrayList<ProductionToken>();
 		body.add(new ProductionToken("Unit", false));
-		body.add(new ProductionToken("*", false));
+		body.add(new ProductionToken("*", true));
 		
 		production = new Production(head, body);
 		this.productions.add(production);
@@ -97,9 +97,9 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		head = new ProductionToken("Unit", false);
 		
 		body = new ArrayList<ProductionToken>();
-		body.add(new ProductionToken("(", false));
+		body.add(new ProductionToken("(", true));
 		body.add(new ProductionToken("Regexp", false));
-		body.add(new ProductionToken(")", false));
+		body.add(new ProductionToken(")", true));
 		
 		production = new Production(head, body);
 		this.productions.add(production);

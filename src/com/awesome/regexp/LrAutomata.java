@@ -29,8 +29,6 @@ public class LrAutomata {
 	
 	private Stack<ProductionToken> traceFirstFunc;
 	
-	private int reduceCount;
-
 	public LrAutomata() {
 		this.stateStack = new Stack<State>();
 		this.gotoTable = new GotoTable();
@@ -54,11 +52,14 @@ public class LrAutomata {
 
 		constructActionTable();
 		
-		System.out.println("======================== action table ==========================\n");
-		System.out.println(this.actionTable);
+//		System.out.println("======================== action table ==========================\n");
+//		System.out.println(this.actionTable);
+//		System.out.println("======================== action table end ======================\n");
 //		System.out.println("======================== states ==========================\n");
 //		printStates();
+//		System.out.println("======================== goto table ============================\n");
 //		System.out.println(this.gotoTable);
+//		System.out.println("======================== goto table end ============================\n");
 		
 //		System.out.println(follow(new ProductionToken("Regexp", false)));
 	}
@@ -75,7 +76,11 @@ public class LrAutomata {
 		InputSymbol next = inputQueue.poll();
 
 		while (true /*action != Action.ACCEPT && action != Action.ERROR*/) {
+			
+//			System.out.println("============================= parse() ===========================");
 			State state = this.stateStack.peek();
+//			System.out.println("state: " + state);
+			System.out.println("input: " + next.face);
 			
 			action = this.actionTable.nextAction(state, next.type);
 			
@@ -85,12 +90,12 @@ public class LrAutomata {
 				State shiftTo = action.shiftTo;
 				this.stateStack.push(shiftTo);
 				
-				next = inputQueue.poll();
-				
 				symbolStack.push(next);
 				
+				System.out.println("shift: " + shiftTo);
 				System.out.println(symbolStack);
 				
+				next = inputQueue.poll();
 			} else if (action.reduce) {
 				Production prodToReduce = action.prodToReduce;
 				
@@ -108,16 +113,21 @@ public class LrAutomata {
 				
 				symbolStack.push(new InputSymbol(prodToReduce.head.text, prodToReduce.head));
 				
+				System.out.println("reduce: " + action.prodToReduce);
 				System.out.println(symbolStack);
 				
 				// Output thr production A -> B
 			} else if (action.accept) {
+				System.out.println("accept");
 				break;
 			} else if (action.error) {
 				// Call error-recovery routine.
 				break;
 			}
+			System.out.println("===================== Divider ========================\n");
 		}
+		
+		
 
 		return null;
 	}
@@ -200,7 +210,6 @@ public class LrAutomata {
 				Action action = null;
 				
 				if (indexOfDot == prod.body.size() - 1) {
-//					System.out.println("~~~~~~~~~~~~" + prod + "\n");
 					if (prod.head.text.equals("Regexp'")) {
 						// state contains the production "Regexp' -> Regexp DOT"
 						action = new Action("ACCEPT");
@@ -209,35 +218,25 @@ public class LrAutomata {
 						this.actionTable.update(state, dollarSymbol, action);
 					} else {
 						List<ProductionToken> followSet = follow(prod.head);
-						
-						System.out.println("state:\n" + state);
+										
 						for (ProductionToken symbol : followSet) {
 							action = new Action("REDUCE");
 							action.prodToReduce = prod;
 							
 							
-							System.out.println("symbol: " + symbol);
-//							System.out.println("reduce to: \n" + prod);
 							this.actionTable.update(state, symbol, action);
-							System.out.println("action.reduce: \n" + action.reduce);
-							
-							
-//							System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~ action table ~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-//							System.out.println(this.actionTable);
-//							System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-							
 						}
-						System.out.println("===================");
 					}
 
 				} else if (indexOfDot >= 0 && indexOfDot < prod.body.size() - 1) {
 					ProductionToken symbolNextToDot = getSymbolNextToDot(prod);
-					
-//					System.out.println("symbolNextToDot:\n" + symbolNextToDot + "\n========================\n");
-	
+						
 					if (symbolNextToDot.isTerminal == true) {
 						State shiftTo = nextState(state, symbolNextToDot);
 						
+//						if (symbolNextToDot.text.equals(")")) {
+//							System.out.println(symbolNextToDot);
+//						}
 						action = new Action("SHIFT");
 						action.shiftTo = shiftTo;
 						
@@ -248,9 +247,6 @@ public class LrAutomata {
 			}
 		}
 		
-		System.out.println("reduce count: " + this.reduceCount);
-//		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~ action table ~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-//		System.out.println(this.actionTable);
 	}
 
 	private State transfor(State origin, ProductionToken symbol) {
@@ -330,7 +326,7 @@ public class LrAutomata {
 					// 2. If there is a production A -> aBb, then everything in
 					// FIRST(b) except epsilon is in FOLLOW(B).
 					List<ProductionToken> firstB = first(nextSymbol);
-//					System.out.println("firstB:\n" + firstB);
+					
 					for (ProductionToken firstBItem : firstB) {
 						ProductionToken epsilon = ProductionToken.epsilon;
 						
@@ -428,7 +424,20 @@ public class LrAutomata {
 		for (int i = 0; i < input.length(); i ++) {
 			char ch = input.charAt(i);
 			
-			this.inputQueue.add(new InputSymbol(ch, ProductionToken.ch));
+			if (ch >= 0 && ch <9 || ch >= 'a' && ch <='z' || ch >= 'A' && ch <= 'Z') {
+				this.inputQueue.add(new InputSymbol(ch, ProductionToken.ch));
+			} else if (ch == '*') {
+				this.inputQueue.add(new InputSymbol(ch, ProductionToken.star));
+			} else if (ch == '(') {
+				this.inputQueue.add(new InputSymbol(ch, ProductionToken.leftParenthesis));
+			} else if (ch == ')') {
+				this.inputQueue.add(new InputSymbol(ch, ProductionToken.rightParenthesis));
+			} else if (ch == '|') {
+				this.inputQueue.add(new InputSymbol(ch, ProductionToken.verticalBar));
+			} else {
+				assert false;
+			}
+//			
 		}
 		
 		this.inputQueue.add(new InputSymbol(ProductionToken.dollar.text, ProductionToken.dollar));

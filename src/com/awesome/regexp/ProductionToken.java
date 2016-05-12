@@ -25,6 +25,14 @@ public class ProductionToken {
 	
 	static public final ProductionToken ch;
 	
+	static public final ProductionToken star;
+	
+	static public final ProductionToken leftParenthesis;
+	
+	static public final ProductionToken rightParenthesis;
+	
+	static public final ProductionToken verticalBar;
+	
 	static {
 		epsilon = new ProductionToken ("EPSILON", true);
 		
@@ -49,6 +57,14 @@ public class ProductionToken {
 		for (char c = 'A'; c <= 'Z'; c++){
 			ch.collection.add(c);
 		}
+		
+		star = new ProductionToken("*", true);
+		
+		leftParenthesis = new ProductionToken("(", true);
+		
+		rightParenthesis = new ProductionToken(")", true);
+		
+		verticalBar = new ProductionToken("|", true);
 	}
 	
 	
