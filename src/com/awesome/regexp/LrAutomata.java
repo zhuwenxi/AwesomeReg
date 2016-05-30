@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Stack;
 
 public class LrAutomata {
@@ -69,6 +68,7 @@ public class LrAutomata {
 		this.stateStack.push(this.states.get(0));
 		
 		Stack<InputSymbol> symbolStack = new Stack<InputSymbol>();
+		Stack<AbstractSyntaxTree.TreeNode> astStack = new Stack<AbstractSyntaxTree.TreeNode>();
 		
 		Action action = null;
 		
@@ -95,9 +95,19 @@ public class LrAutomata {
 				System.out.println("shift: " + shiftTo);
 				System.out.println(symbolStack);
 				
+				// Update astStack.
+				AbstractSyntaxTree.TreeNode newNode = new AbstractSyntaxTree.TreeNode(next);
+				System.out.println("shift node:");
+				newNode.printSelf(1);
+				astStack.push(newNode);
+				
 				next = inputQueue.poll();
 			} else if (action.reduce) {
 				Production prodToReduce = action.prodToReduce;
+				
+				AbstractSyntaxTree.TreeNode newNode = new AbstractSyntaxTree.TreeNode();
+				
+				Stack<AbstractSyntaxTree.TreeNode> tmpAstStack = new Stack<AbstractSyntaxTree.TreeNode>();
 				
 				for (int i = prodToReduce.body.size() - 2; i >= 0 ; i --) {
 					ProductionToken lastProductionToken = prodToReduce.body.get(i);
@@ -106,7 +116,37 @@ public class LrAutomata {
 					this.stateStack.pop();
 					
 					symbolStack.pop();
+					
+					// Update astStack.
+					if (prodToReduce.operator != null) {
+						tmpAstStack.push(astStack.pop());
+					}
 				}
+				
+				// Update astStack.
+				if (prodToReduce.operator != null) {
+					newNode.operator = prodToReduce.operator;
+//					if (prodToReduce.operator == AbstractSyntaxTree.Operator.UNIT) {
+//						System.out.println("~~~~~~~~~~~~~~");
+//					}
+					
+					if (prodToReduce.leftOperandIndex > -1) {
+						newNode.leftOperand = tmpAstStack.get(tmpAstStack.size() - prodToReduce.leftOperandIndex - 1);
+					}
+					
+					if (prodToReduce.rightOperandIndex > -1 ) {
+						newNode.rightOperand = tmpAstStack.get(tmpAstStack.size() - prodToReduce.rightOperandIndex - 1);
+					}
+					
+					System.out.println("reduce node:");
+					System.out.println("~~~~~~~~~~~~~~~AST start~~~~~~~~~~~~~~~");
+					newNode.printSelf(1);
+					System.out.println("~~~~~~~~~~~~~~~AST end~~~~~~~~~~~~~~~");
+					astStack.push(newNode);
+				}
+				
+				
+				
 				
 				State topState = this.stateStack.peek();
 				this.stateStack.push(this.gotoTable.nextState(topState, prodToReduce.head));
@@ -128,8 +168,9 @@ public class LrAutomata {
 		}
 		
 		
-
-		return null;
+//		AbstractSyntaxTree.TreeNode astNode = astStack.peek();
+//		astNode.printSelf(0);
+		return new AbstractSyntaxTree(astStack.pop());
 	}
 
 	private List<ProductionToken> initSymbolList(ContextFreeGrammar grammar) {

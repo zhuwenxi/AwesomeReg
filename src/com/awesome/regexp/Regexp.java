@@ -51,6 +51,9 @@ public class Regexp {
 		//
 		this.ast = this.lrAutomata.parse(regexpString);
 		
+		System.out.println("Print AST:");
+		this.ast.root.printSelf(1);
+		
 	}
 	
 	@Override 

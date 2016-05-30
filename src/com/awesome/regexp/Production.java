@@ -11,7 +11,12 @@ public class Production {
 
 	public ProductionToken head;
 	public List<ProductionToken> body;
-
+	
+	public AbstractSyntaxTree.Operator operator;
+	public int operatorIndex;
+	public int leftOperandIndex;
+	public int rightOperandIndex;
+	
 	private static List<Character> letters;
 	private static List<Character> numbers;
 
@@ -58,6 +63,11 @@ public class Production {
 
 	public Production() {
 		this.body = new ArrayList<ProductionToken>();
+		
+		this.operator = null;
+		this.operatorIndex = -1;
+		this.leftOperandIndex = -1;
+		this.rightOperandIndex = -1;
 	}
 
 	public Production(String productionString) {
@@ -65,6 +75,7 @@ public class Production {
 	}
 	
 	public Production(ProductionToken head, List<ProductionToken> body){
+		this();
 		this.head = head;
 		this.body = body;
 	}
@@ -136,6 +147,11 @@ public class Production {
 		for (ProductionToken pt : this.body) {
 			cloneObj.body.add(pt);
 		}
+		
+		cloneObj.operator = this.operator;
+		cloneObj.leftOperandIndex = this.leftOperandIndex;
+		cloneObj.rightOperandIndex = this.rightOperandIndex;
+		cloneObj.operatorIndex = this.operatorIndex;
 		
 		return cloneObj;
 	}

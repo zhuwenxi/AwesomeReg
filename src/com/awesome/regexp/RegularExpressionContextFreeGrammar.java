@@ -27,6 +27,7 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		body.add(new ProductionToken("Regexp", false));
 		
 		production = new Production(head, body);
+		
 		this.productions.add(production);
 		
 		// Regexp -> Regexp | Concat
@@ -38,6 +39,12 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		body.add(new ProductionToken("Concat", false));
 		
 		production = new Production(head, body);
+		
+		production.operator = AbstractSyntaxTree.Operator.ALTER;
+		production.leftOperandIndex = 0;
+		production.rightOperandIndex = 2;
+		production.operatorIndex = 1;
+		
 		this.productions.add(production);
 		
 		
@@ -59,6 +66,11 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		body.add(new ProductionToken("Repeat", false));
 		
 		production = new Production(head, body);
+		
+		production.operator = AbstractSyntaxTree.Operator.CONCAT;
+		production.leftOperandIndex = 0;
+		production.rightOperandIndex = 1;
+		
 		this.productions.add(production);
 		
 		
@@ -80,6 +92,11 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		body.add(new ProductionToken("*", true));
 		
 		production = new Production(head, body);
+		
+		production.operator = AbstractSyntaxTree.Operator.REPEAT;
+		production.leftOperandIndex = 0;
+		production.operatorIndex = 1;
+		
 		this.productions.add(production);
 		
 		
@@ -102,6 +119,10 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		body.add(new ProductionToken(")", true));
 		
 		production = new Production(head, body);
+		
+		production.operator = AbstractSyntaxTree.Operator.UNIT;
+		production.leftOperandIndex = 1;
+		
 		this.productions.add(production);
 		
 		
