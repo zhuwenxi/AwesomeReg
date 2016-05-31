@@ -60,18 +60,21 @@ public class AbstractSyntaxTree {
 			
 			if (this.operator != null) {
 				System.out.println(this.operator);
+//				printSpace(this.operator.toString().length());
 			}
 			
 			if (this.text != null) {
 				System.out.println(this.text);
+//				printSpace(this.text.toString().length());
 			}
 			
 			if (this.leftOperand != null) {
 				for (int i = 0; i < level; i ++) {
 					if (i == level - 1) {
-						System.out.print("\\______");
+						System.out.print("<><><> ");
+//						System.out.print("	");
 					} else {
-						System.out.print("	");
+						System.out.print("          ");
 					}
 				}
 				
@@ -81,12 +84,20 @@ public class AbstractSyntaxTree {
 			if (this.rightOperand != null) {
 				for (int i = 0; i < level; i ++) {
 					if (i == level - 1) {
-						System.out.print("\\______");
+						System.out.print("<><><> ");
+//						System.out.print("	");
 					} else {
-						System.out.print("	");
+						System.out.print("          ");
 					}
 				}
 				this.rightOperand.printSelf(level + 1);
+			}
+		}
+		
+		private void printSpace(int numOfSpace) {
+			assert numOfSpace >= 0;
+			for (int i = 0; i < numOfSpace; i ++) {
+				System.out.print(" ");
 			}
 		}
 	}
