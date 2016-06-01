@@ -84,7 +84,9 @@ public class LrAutomata {
 			
 			action = this.actionTable.nextAction(state, next.type);
 			
-			assert action != null;
+			if (action != null) {
+				throw new RuntimeException("Not a valid regular expression: " + input);
+			}
 			
 			if (action.shift) {
 				State shiftTo = action.shiftTo;

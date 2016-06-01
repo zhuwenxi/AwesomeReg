@@ -71,7 +71,7 @@ public class AbstractSyntaxTree {
 			if (this.leftOperand != null) {
 				for (int i = 0; i < level; i ++) {
 					if (i == level - 1) {
-						System.out.print("<><><> ");
+						System.out.print(">>>>>> ");
 //						System.out.print("	");
 					} else {
 						System.out.print("          ");
@@ -84,7 +84,7 @@ public class AbstractSyntaxTree {
 			if (this.rightOperand != null) {
 				for (int i = 0; i < level; i ++) {
 					if (i == level - 1) {
-						System.out.print("<><><> ");
+						System.out.print(">>>>>> ");
 //						System.out.print("	");
 					} else {
 						System.out.print("          ");
