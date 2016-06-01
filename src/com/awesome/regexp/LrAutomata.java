@@ -84,7 +84,7 @@ public class LrAutomata {
 			
 			action = this.actionTable.nextAction(state, next.type);
 			
-			if (action != null) {
+			if (action == null) {
 				throw new RuntimeException("Not a valid regular expression: " + input);
 			}
 			
