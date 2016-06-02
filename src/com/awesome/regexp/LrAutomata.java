@@ -80,7 +80,7 @@ public class LrAutomata {
 //			System.out.println("============================= parse() ===========================");
 			State state = this.stateStack.peek();
 //			System.out.println("state: " + state);
-			System.out.println("input: " + next.face);
+//			System.out.println("input: " + next.face);
 			
 			action = this.actionTable.nextAction(state, next.type);
 			
@@ -94,13 +94,13 @@ public class LrAutomata {
 				
 				symbolStack.push(next);
 				
-				System.out.println("shift: " + shiftTo);
-				System.out.println(symbolStack);
+//				System.out.println("shift: " + shiftTo);
+//				System.out.println(symbolStack);
 				
 				// Update astStack.
 				AbstractSyntaxTree.TreeNode newNode = new AbstractSyntaxTree.TreeNode(next);
-				System.out.println("shift node:");
-				newNode.printSelf(1);
+//				System.out.println("shift node:");
+//				newNode.printSelf(1);
 				astStack.push(newNode);
 				
 				next = inputQueue.poll();
@@ -140,10 +140,10 @@ public class LrAutomata {
 						newNode.rightOperand = tmpAstStack.get(tmpAstStack.size() - prodToReduce.rightOperandIndex - 1);
 					}
 					
-					System.out.println("reduce node:");
-					System.out.println("~~~~~~~~~~~~~~~AST start~~~~~~~~~~~~~~~");
-					newNode.printSelf(1);
-					System.out.println("~~~~~~~~~~~~~~~AST end~~~~~~~~~~~~~~~");
+//					System.out.println("reduce node:");
+//					System.out.println("~~~~~~~~~~~~~~~AST start~~~~~~~~~~~~~~~");
+//					newNode.printSelf(1);
+//					System.out.println("~~~~~~~~~~~~~~~AST end~~~~~~~~~~~~~~~");
 					astStack.push(newNode);
 				}
 				
@@ -155,18 +155,18 @@ public class LrAutomata {
 				
 				symbolStack.push(new InputSymbol(prodToReduce.head.text, prodToReduce.head));
 				
-				System.out.println("reduce: " + action.prodToReduce);
-				System.out.println(symbolStack);
+//				System.out.println("reduce: " + action.prodToReduce);
+//				System.out.println(symbolStack);
 				
 				// Output thr production A -> B
 			} else if (action.accept) {
-				System.out.println("accept");
+//				System.out.println("accept");
 				break;
 			} else if (action.error) {
 				// Call error-recovery routine.
 				break;
 			}
-			System.out.println("===================== Divider ========================\n");
+//			System.out.println("===================== Divider ========================\n");
 		}
 		
 		
