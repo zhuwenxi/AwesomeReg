@@ -860,20 +860,31 @@ class Table {
 }
 
 class InputSymbol {
+	public static InputSymbol epsilon;
+	
+	public boolean isEpsilon;
+	
 	public String face;
 	
 	public ProductionToken type;
 	
+	static {
+		InputSymbol.epsilon = new InputSymbol();
+		InputSymbol.epsilon.isEpsilon = true;
+		InputSymbol.epsilon.face = "EPSILON";
+	}
 	public InputSymbol() {
-		
+		this.isEpsilon = false;
 	}
 	
 	public InputSymbol(char ch, ProductionToken symbolType) {
+		this();
 		this.face = Character.toString(ch);
 		this.type = symbolType;
 	}
 	
 	public InputSymbol(String face, ProductionToken symbolType) {
+		this();
 		this.face = face;
 		this.type = symbolType;
 	}
