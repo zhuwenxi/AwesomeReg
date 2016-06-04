@@ -18,20 +18,22 @@ public class FiniteAutomata {
 		this.transDiag = new TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState>();
 	}
 	
-	public FiniteAutomata(AbstractSyntaxTree ast) {
-		this();
-		buildFiniteAutomata(ast);
+	/*
+	 * Use subset construction to convert NFA to DFA.
+	 */
+	public static FiniteAutomata nfaToDfa(FiniteAutomata nfa) {
+		return null;
 	}
 	
-	private void buildFiniteAutomata(AbstractSyntaxTree ast) {
+	public void buildNfa(AbstractSyntaxTree ast) {
 		if (ast == null || ast.root == null) {
 			return;
 		}
 		
-		buildFiniteAutomataFromRoot(ast.root);
+		buildNfaFromRoot(ast.root);
 	}
 	
-	private TransDiagStartAndEnd buildFiniteAutomataFromRoot(AbstractSyntaxTree.TreeNode node) {
+	private TransDiagStartAndEnd buildNfaFromRoot(AbstractSyntaxTree.TreeNode node) {
 		AbstractSyntaxTree.TreeNode leftChild = node.leftOperand;
 		AbstractSyntaxTree.TreeNode rightChild = node.rightOperand;
 		
@@ -41,19 +43,19 @@ public class FiniteAutomata {
 		TransDiagStartAndEnd newDiag = null;
 		
 		if (leftChild != null) {
-			leftDiag = buildFiniteAutomataFromRoot(leftChild);
+			leftDiag = buildNfaFromRoot(leftChild);
 		}
 		
 		if (rightChild != null) {
-			rightDiag = buildFiniteAutomataFromRoot(rightChild);
+			rightDiag = buildNfaFromRoot(rightChild);
 		}
 		
-		newDiag = genNewTransDiag(node, leftDiag, rightDiag);
+		newDiag = genNewNfaTransDiag(node, leftDiag, rightDiag);
 		
 		return newDiag;
 	}
 	
-	private TransDiagStartAndEnd genNewTransDiag(AbstractSyntaxTree.TreeNode node, TransDiagStartAndEnd leftDiag, TransDiagStartAndEnd rightDiag) {
+	private TransDiagStartAndEnd genNewNfaTransDiag(AbstractSyntaxTree.TreeNode node, TransDiagStartAndEnd leftDiag, TransDiagStartAndEnd rightDiag) {
 		AbstractSyntaxTree.Operator operator = node.operator;
 		TransDiagStartAndEnd newDiag = null;
 		

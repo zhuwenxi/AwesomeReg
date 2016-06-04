@@ -29,8 +29,6 @@ public class Regexp {
 	//
 	private AbstractSyntaxTree ast;
 	
-	private FiniteAutomata NFA;
-	
 	
 	public Regexp(){
 		
@@ -54,8 +52,10 @@ public class Regexp {
 //		System.out.println("Print AST:");
 		this.ast.root.printSelf(1);
 		
-		this.NFA = new FiniteAutomata(this.ast);
+		FiniteAutomata NFA = new FiniteAutomata();
+		NFA.buildNfa(ast);
 		
+		FiniteAutomata DFA = FiniteAutomata.nfaToDfa(NFA);
 	}
 	
 	@Override 
