@@ -893,4 +893,16 @@ class InputSymbol {
 	public String toString() {
 		return face;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		InputSymbol that = (InputSymbol)o;
+		return that != null && this.face.equals(that.face) && this.isEpsilon == that.isEpsilon;
+	}
+	
+	@Override
+	public int hashCode() {
+		// Dirty implementation ...
+		return 100;
+	}
 }

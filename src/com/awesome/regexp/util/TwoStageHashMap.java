@@ -35,6 +35,20 @@ public class TwoStageHashMap<L1Key, L2Key, Value> {
 		}
 	}
 	
+	public Set<L1Key> getL1KeySet() {
+		return this.impl.keySet();
+	}
+	
+	public Set<L2Key> getL2KeySet(L1Key key1) {
+		if (key1 == null) {
+			return null;
+		}
+		
+		Map<L2Key, List<Value>> secondStageHashMap = this.impl.get(key1);
+		
+		return secondStageHashMap != null ? secondStageHashMap.keySet() : null;
+	}
+	
 	public List<Value> query(L1Key key1, L2Key key2) {
 		if (key1 == null || key2 == null) {
 			return null;
@@ -46,7 +60,6 @@ public class TwoStageHashMap<L1Key, L2Key, Value> {
 			return secondStageHashMap.get(key2);
 		} else {
 			// Should not get here.
-			assert false;
 			return null;
 		}
 		

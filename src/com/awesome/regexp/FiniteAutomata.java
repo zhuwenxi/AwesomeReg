@@ -1,6 +1,7 @@
 package com.awesome.regexp;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.awesome.regexp.util.TwoStageHashMap;
@@ -11,168 +12,79 @@ public class FiniteAutomata {
 	
 	public int nextStateNumber;
 	
-	private TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState> transDiag;
+	public List<FiniteAutomataState> states;
+	
+	public FiniteAutomataState start;
+	public FiniteAutomataState end;
+	
+	public List<InputSymbol> symbolSet;
+	
+	protected TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState> transDiag;
 	
 	public FiniteAutomata() {
 		this.nextStateNumber = 0;
 		this.transDiag = new TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState>();
+		this.states = new ArrayList<FiniteAutomataState>();
+		
+		this.symbolSet = new ArrayList<InputSymbol>();
 	}
 	
-	/*
-	 * Use subset construction to convert NFA to DFA.
-	 */
-	public static FiniteAutomata nfaToDfa(FiniteAutomata nfa) {
-		return null;
-	}
-	
-	public void buildNfa(AbstractSyntaxTree ast) {
-		if (ast == null || ast.root == null) {
-			return;
-		}
-		
-		buildNfaFromRoot(ast.root);
-	}
-	
-	private TransDiagStartAndEnd buildNfaFromRoot(AbstractSyntaxTree.TreeNode node) {
-		AbstractSyntaxTree.TreeNode leftChild = node.leftOperand;
-		AbstractSyntaxTree.TreeNode rightChild = node.rightOperand;
-		
-		TransDiagStartAndEnd leftDiag = null;
-		TransDiagStartAndEnd rightDiag = null;
-		
-		TransDiagStartAndEnd newDiag = null;
-		
-		if (leftChild != null) {
-			leftDiag = buildNfaFromRoot(leftChild);
-		}
-		
-		if (rightChild != null) {
-			rightDiag = buildNfaFromRoot(rightChild);
-		}
-		
-		newDiag = genNewNfaTransDiag(node, leftDiag, rightDiag);
-		
-		return newDiag;
-	}
-	
-	private TransDiagStartAndEnd genNewNfaTransDiag(AbstractSyntaxTree.TreeNode node, TransDiagStartAndEnd leftDiag, TransDiagStartAndEnd rightDiag) {
-		AbstractSyntaxTree.Operator operator = node.operator;
-		TransDiagStartAndEnd newDiag = null;
-		
-		
-		if (operator == null) {
-			// Leaf node:
-			printDebugLog("\n<Leaf>: ");
-			
-			newDiag = contructLeafNode(node.text);
-		} else {
-			// Interior node:
-			
-			printDebugLog("\n" + operator.toString());
-			
-			switch(operator) {
-			case ALTER:
-				newDiag = constructAlter(leftDiag, rightDiag);
-				break;
-			case CONCAT:
-				newDiag = constructConcat(leftDiag, rightDiag);
-				break;
-			case REPEAT:
-				newDiag = constructRepeat(leftDiag, rightDiag);
-				break;
-			case UNIT:
-				newDiag = constructUnit(leftDiag, rightDiag);
-				break;
-			}
-		}
-		
-		printDebugLog("=========== Trans Diag Start ==========");
-		printDebugLog(this.transDiag.toString()); 
-		printDebugLog("=========== Trans Diag End ==========");
-		
-		return newDiag;
-	}
-	
-	private TransDiagStartAndEnd constructAlter(TransDiagStartAndEnd leftDiag, TransDiagStartAndEnd rightDiag) {
-		List<FiniteAutomataState> states = createStates(2);
-		
-		FiniteAutomataState state1 = states.get(0);
-		FiniteAutomataState state2 = states.get(1);
-		
-		this.transDiag.update(state1, InputSymbol.epsilon, leftDiag.startState);
-		this.transDiag.update(state1, InputSymbol.epsilon, rightDiag.startState);
-		
-		this.transDiag.update(leftDiag.endState, InputSymbol.epsilon, state2);
-		this.transDiag.update(rightDiag.endState, InputSymbol.epsilon, state2);
-
-		return new TransDiagStartAndEnd(state1, state2);
-	}
-	
-	private TransDiagStartAndEnd constructConcat(TransDiagStartAndEnd leftDiag, TransDiagStartAndEnd rightDiag) {
-		this.transDiag.update(leftDiag.endState, InputSymbol.epsilon, rightDiag.startState);
-		
-//		printDebugLog("=========== Trans Diag Start ==========");
-//		printDebugLog(this.transDiag.toString()); 
-//		printDebugLog("=========== Trans Diag End ==========");
-		
-		return new TransDiagStartAndEnd(leftDiag.startState, rightDiag.endState);
-	}
-	
-	private TransDiagStartAndEnd constructRepeat(TransDiagStartAndEnd leftDiag, TransDiagStartAndEnd rightDiag) {
-		assert leftDiag != null;
-		assert rightDiag == null;
-		
-		List<FiniteAutomataState> states = createStates(2);
-		assert states.size() == 2;
-		
-		FiniteAutomataState state1 = states.get(0);
-		FiniteAutomataState state2 = states.get(1);
-		
-		this.transDiag.update(state1, InputSymbol.epsilon, leftDiag.startState);
-		this.transDiag.update(state1, InputSymbol.epsilon, state2);
-		this.transDiag.update(leftDiag.endState, InputSymbol.epsilon, state2);
-		this.transDiag.update(leftDiag.endState, InputSymbol.epsilon, leftDiag.startState);
-		
-		return new TransDiagStartAndEnd(state1, state2);
-	}
-	
-	private TransDiagStartAndEnd constructUnit(TransDiagStartAndEnd leftDiag, TransDiagStartAndEnd rightDiag) {
-		assert leftDiag != null;
-		assert rightDiag == null;
-		
-		return new TransDiagStartAndEnd(leftDiag.startState, leftDiag.endState);
-	}
-	
-	private TransDiagStartAndEnd contructLeafNode(InputSymbol symbol) {
-		List<FiniteAutomataState> states = createStates(2);
-		assert states.size() == 2;
-		
-		FiniteAutomataState state1 = states.get(0);
-		FiniteAutomataState state2 = states.get(1);
-		
-		this.transDiag.update(state1, symbol, state2);
-//		printDebugLog("=========== Trans Diag Start ==========");
-//		printDebugLog(this.transDiag.toString()); 
-//		printDebugLog("=========== Trans Diag End ==========");
-		
-		return new TransDiagStartAndEnd(state1, state2);
-	}
-	
-	private List<FiniteAutomataState> createStates(int stateCount) {
+	protected List<FiniteAutomataState> createStates(int stateCount) {
 		List<FiniteAutomataState> states = new ArrayList<>();
 		
 		for (int i = 0; i < stateCount; i ++) {
-			states.add(new FiniteAutomataState(this.nextStateNumber));
+			FiniteAutomataState newState = new FiniteAutomataState(this.nextStateNumber);
+			states.add(newState);
 			this.nextStateNumber ++;
 		}
+		
+		this.states.addAll(states);
 		
 		return states;
 	}
 		
-	private void printDebugLog(String log) {
+	protected void printDebugLog(Object log) {
 		if (FiniteAutomata.DEBUG) {
-			System.out.println(log);
+			System.out.println(log.toString());
 		}
+	}
+	
+	protected List<FiniteAutomataState> epsilonClosure(List<FiniteAutomataState> dfaState) {
+		assert dfaState.size() != 0;
+		
+		if (dfaState == null) {
+			return null;
+		}
+		
+		List<FiniteAutomataState> closureSet = new ArrayList<FiniteAutomataState>();
+		List<FiniteAutomataState> workList = new ArrayList<FiniteAutomataState>();
+		
+		workList.addAll(dfaState);
+		closureSet.addAll(dfaState);
+		
+		while(!workList.isEmpty()) {
+			FiniteAutomataState nfaState = workList.remove(0);
+			
+			List<FiniteAutomataState> dest = this.transDiag.query(nfaState, InputSymbol.epsilon);
+			
+			if (dest != null) {
+				for(FiniteAutomataState s : dest) {
+					if (!closureSet.contains(s)) {
+						workList.add(s);
+						closureSet.add(s);
+					}
+				}
+			}
+			
+		}
+		
+		closureSet.sort(new Comparator<FiniteAutomataState>() {
+			public int compare(FiniteAutomataState s1, FiniteAutomataState s2) {
+				return s1.stateNumber - s2.stateNumber;
+			}
+		});
+		
+		return closureSet;
 	}
 	
 }

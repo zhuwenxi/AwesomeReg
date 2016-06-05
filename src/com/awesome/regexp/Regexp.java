@@ -52,10 +52,8 @@ public class Regexp {
 //		System.out.println("Print AST:");
 		this.ast.root.printSelf(1);
 		
-		FiniteAutomata NFA = new FiniteAutomata();
-		NFA.buildNfa(ast);
-		
-		FiniteAutomata DFA = FiniteAutomata.nfaToDfa(NFA);
+		FiniteAutomata NFA = new NondeterministicFiniteAutomata(ast);
+		FiniteAutomata DFA = new DeterministicFiniteAutomata(NFA);
 	}
 	
 	@Override 
