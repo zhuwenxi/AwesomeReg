@@ -181,12 +181,17 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		List<List<FiniteAutomataState>> newPartitions = new ArrayList<List<FiniteAutomataState>>();
 //		TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, FiniteAutomataState> partitionMap = new TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, FiniteAutomataState>();
 		
+		List<FiniteAutomataState> partitionBelongTo = null;
 		for (InputSymbol symbol : this.symbolSet) {
 			for (FiniteAutomataState state : partition) {
 				List<FiniteAutomataState> destStates = this.transDiag.query(state, symbol);
 				
 				if (destStates != null) {
 					assert destStates.size() == 1;
+					
+					if (partitionBelongTo == null) {
+						
+					}
 				}
 			}
 		}
