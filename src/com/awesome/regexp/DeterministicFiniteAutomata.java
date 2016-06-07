@@ -17,7 +17,7 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 	private List<List<FiniteAutomataState>> internalStates;
 	
 	private List<FiniteAutomataState> internalStart;
-	private List<FiniteAutomataState> internalEnd;
+	private List<List<FiniteAutomataState>> internalEnd;
 	
 	private Map<List<FiniteAutomataState>, FiniteAutomataState> stateDict;
 	
@@ -30,6 +30,8 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		this.transDiag = new TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState>();
 		
 		this.stateDict = new HashMap<List<FiniteAutomataState>, FiniteAutomataState>();
+		
+		this.internalEnd = new ArrayList<List<FiniteAutomataState>>();
 	}
 	
 	public DeterministicFiniteAutomata(FiniteAutomata nfa) {
@@ -37,15 +39,17 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		nfaToDfa(nfa);
 		renameNfaStateToDfaState();
 		
-		printDebugLog("STATES: ");
-		printDebugLog(this.internalStates);
-		printDebugLog("DIAGS: ");
-		printDebugLog(this.internalTransDiag);
+//		minifyStateNumber();
+		
+//		printDebugLog("STATES: ");
+//		printDebugLog(this.internalStates);
+//		printDebugLog("DIAGS: ");
+//		printDebugLog(this.internalTransDiag);
 		
 		printDebugLog(this.stateDict);
 		printDebugLog(this.transDiag);
 		
-		printDebugLog(this.start + "," + this.end);
+//		printDebugLog(this.start + "," + this.end);
 	}
 	
 	/*
@@ -92,18 +96,18 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 						
 						if (newDfaState.contains(nfa.end)) {
 							// Mark as accept state:
-							assert this.internalEnd == null;
-							this.internalEnd = newDfaState;
+//							assert this.internalEnd == null;
+							this.internalEnd.add(newDfaState);
 						}
 						
 						workList.add(newDfaState);
 						Q.add(newDfaState);
-						printDebugLog("New state:");
-						printDebugLog(newDfaState);
-						
-						printDebugLog("after Q:");
-						printDebugLog(Q);
-						printDebugLog("");
+//						printDebugLog("New state:");
+//						printDebugLog(newDfaState);
+//						
+//						printDebugLog("after Q:");
+//						printDebugLog(Q);
+//						printDebugLog("");
 						
 						
 //						printDebugLog("~~~~~~~~~~~~~ diag start ~~~~~~~~~~~");
@@ -125,8 +129,8 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 				this.start = newDfaState;
 			}
 			
-			if (nfaStates == this.internalEnd) {
-				this.end = newDfaState;
+			if (this.internalEnd.contains(newDfaState)) {
+				this.end.add(newDfaState);
 			}
 		}
 		
@@ -137,6 +141,54 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 				}
 			}
 		}
+	}
+	
+	private void minifyStateNumber() {
+		List<List<FiniteAutomataState>> partitions = new ArrayList<List<FiniteAutomataState>>();
+		List<FiniteAutomataState> acceptPartition = new ArrayList<FiniteAutomataState>();
+		List<FiniteAutomataState> nonAcceptPartition = new ArrayList<FiniteAutomataState>();
+		for (FiniteAutomataState state : this.states) {
+			if (state == this.end) {
+				acceptPartition.add(state);
+			} else {
+				nonAcceptPartition.add(state);
+			}
+		}
+		partitions.add(acceptPartition);
+		partitions.add(nonAcceptPartition);
+		
+		List<List<FiniteAutomataState>> lastPartitions = new ArrayList<List<FiniteAutomataState>>();
+		
+		while (lastPartitions.size() != partitions.size()) {
+			
+			lastPartitions = partitions;
+			partitions = new ArrayList<List<FiniteAutomataState>>();
+			
+			for (int i = 0; i < lastPartitions.size(); i ++) {
+				List<FiniteAutomataState> partition = lastPartitions.get(i);
+				
+				for(int j = 0; j < partition.size(); j ++) {
+					FiniteAutomataState state = partition.get(j);
+					
+				}
+			}
+		}
+	}
+	
+	private List<List<FiniteAutomataState>> splitPartition(List<FiniteAutomataState> partition, List<List<FiniteAutomataState>> lastPartitions) {
+		List<List<FiniteAutomataState>> newPartitions = new ArrayList<List<FiniteAutomataState>>();
+		TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, FiniteAutomataState> partitionMap = new TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, FiniteAutomataState>();
+		
+		for (InputSymbol symbol : this.symbolSet) {
+			for (FiniteAutomataState state : partition) {
+				List<FiniteAutomataState> destStates = this.transDiag.query(state, symbol);
+				
+				if (destStates != null) {
+					
+				}
+			}
+		}
+		return newPartitions;
 	}
 	
 	

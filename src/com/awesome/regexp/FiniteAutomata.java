@@ -15,7 +15,7 @@ public class FiniteAutomata {
 	public List<FiniteAutomataState> states;
 	
 	public FiniteAutomataState start;
-	public FiniteAutomataState end;
+	public List<FiniteAutomataState> end;
 	
 	public List<InputSymbol> symbolSet;
 	
@@ -27,6 +27,8 @@ public class FiniteAutomata {
 		this.states = new ArrayList<FiniteAutomataState>();
 		
 		this.symbolSet = new ArrayList<InputSymbol>();
+		
+		this.end = new ArrayList<FiniteAutomataState>();
 	}
 	
 	protected List<FiniteAutomataState> createStates(int stateCount) {
@@ -49,10 +51,8 @@ public class FiniteAutomata {
 		}
 	}
 	
-	protected List<FiniteAutomataState> epsilonClosure(List<FiniteAutomataState> dfaState) {
-		assert dfaState.size() != 0;
-		
-		if (dfaState == null) {
+	protected List<FiniteAutomataState> epsilonClosure(List<FiniteAutomataState> dfaState) {		
+		if (dfaState.size() == 0 || dfaState == null) {
 			return null;
 		}
 		
