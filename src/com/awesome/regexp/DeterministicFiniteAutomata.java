@@ -45,9 +45,11 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 //		printDebugLog(this.internalStates);
 //		printDebugLog("DIAGS: ");
 //		printDebugLog(this.internalTransDiag);
-		
-		printDebugLog(this.stateDict);
+		printDebugLog(this.states);
 		printDebugLog(this.transDiag);
+		
+		printDebugLog(this.start);
+		printDebugLog(this.end);
 		
 //		printDebugLog(this.start + "," + this.end);
 	}
@@ -68,7 +70,7 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		this.internalStates.add(dfaState0);
 		this.internalStart = dfaState0;
 		
-		printDebugLog(dfaState0);
+//		printDebugLog(dfaState0);
 		
 		workList.add(dfaState0);
 		Q.add(dfaState0);
@@ -156,8 +158,9 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 				nonAcceptPartition.add(state);
 			}
 		}
-		partitions.add(acceptPartition);
 		partitions.add(nonAcceptPartition);
+		partitions.add(acceptPartition);
+		
 		
 		List<List<FiniteAutomataState>> lastPartitions = new ArrayList<List<FiniteAutomataState>>();
 		
@@ -169,35 +172,126 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 			for (int i = 0; i < lastPartitions.size(); i ++) {
 				List<FiniteAutomataState> partition = lastPartitions.get(i);
 				
-				for(int j = 0; j < partition.size(); j ++) {
-					FiniteAutomataState state = partition.get(j);
-					splitPartition(partition, lastPartitions);
-				}
+				List<List<FiniteAutomataState>> newPartitions = splitPartition(partition, lastPartitions);
+					
+//				printDebugLog("================= Parition ===================");
+//				printDebugLog(partition);
+//				printDebugLog("================= After Split ===================");
+//				printDebugLog(newPartitions);
+					
+				partitions.addAll(newPartitions);
 			}
 		}
+		
+//		printDebugLog(partitions);
+		
+		renameParitionToState(partitions);
 	}
 	
 	private List<List<FiniteAutomataState>> splitPartition(List<FiniteAutomataState> partition, List<List<FiniteAutomataState>> lastPartitions) {
 		List<List<FiniteAutomataState>> newPartitions = new ArrayList<List<FiniteAutomataState>>();
 //		TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, FiniteAutomataState> partitionMap = new TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, FiniteAutomataState>();
+		List<FiniteAutomataState> s1 = null;
+		List<FiniteAutomataState> s2 = null;
 		
-		List<FiniteAutomataState> partitionBelongTo = null;
+		List<FiniteAutomataState> partitionS1BelongTo = null;
 		for (InputSymbol symbol : this.symbolSet) {
+			s1 = new ArrayList<FiniteAutomataState>();
+			s2 = new ArrayList<FiniteAutomataState>();
+			
 			for (FiniteAutomataState state : partition) {
 				List<FiniteAutomataState> destStates = this.transDiag.query(state, symbol);
 				
 				if (destStates != null) {
 					assert destStates.size() == 1;
+					FiniteAutomataState destState = destStates.get(0);
 					
-					if (partitionBelongTo == null) {
-						
+					if (partitionS1BelongTo == null) {
+						partitionS1BelongTo = whichPartition(destState, lastPartitions);
 					}
+					
+					if (partitionS1BelongTo.contains(destState)) {
+						s1.add(state);
+					} else {
+						s2.add(state);
+					}
+					
+				} else {
+					s2.add(state);
+				}
+			}
+			
+			if (s1.size() > 0 && s2.size() > 0) {
+				newPartitions.add(s1);
+				newPartitions.add(s2);
+							
+				return newPartitions;
+			}
+		}
+		
+		newPartitions.add(partition);
+		return newPartitions;
+	}
+	
+	private List<FiniteAutomataState> whichPartition(FiniteAutomataState state, List<List<FiniteAutomataState>> lastPartitions) {
+		for (List<FiniteAutomataState> partition : lastPartitions ) {
+			if (partition.contains(state)) {
+				return partition;
+			}
+		}
+		
+		assert false;
+		return null;
+	}
+	
+	private void renameParitionToState(List<List<FiniteAutomataState>> partitions) {
+		printDebugLog(partitions);
+		resetStates();
+		Map<FiniteAutomataState, FiniteAutomataState> stateDict = new HashMap<FiniteAutomataState, FiniteAutomataState>();
+		
+		List<FiniteAutomataState> newStates = new ArrayList<FiniteAutomataState>();
+		FiniteAutomataState startState = null;
+		List<FiniteAutomataState> endStates = new ArrayList<FiniteAutomataState>();
+		TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState> newTransDiag = new TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState>();
+		
+		for (List<FiniteAutomataState> partition : partitions) {
+			FiniteAutomataState newState = createStates(1).get(0);
+			
+			for (FiniteAutomataState originState : partition) {
+				stateDict.put(originState, newState);
+			}
+			
+			
+			if (partition.contains(this.start)) {
+				startState = newState;
+			}
+			
+			for (FiniteAutomataState endState: this.end) {
+				if (partition.contains(endState)) {
+					endStates.add(newState);
+					break;
+				}
+			}
+			
+			newStates.add(newState);
+		}
+		
+		for (FiniteAutomataState originState : this.states) {
+			for (InputSymbol input : this.symbolSet) {
+				List<FiniteAutomataState> destState = this.transDiag.query(originState, input);
+				
+				if (destState != null) {
+					assert destState.size() == 1;
+					assert stateDict.get(originState) != null && stateDict.get(destState.get(0)) != null;
+					newTransDiag.update(stateDict.get(originState), input, stateDict.get(destState.get(0)));
 				}
 			}
 		}
 		
-		
-		return newPartitions;
+		this.start = startState;
+		this.end = endStates;
+		this.states = newStates;
+		this.transDiag = newTransDiag;
 	}
 	
 	

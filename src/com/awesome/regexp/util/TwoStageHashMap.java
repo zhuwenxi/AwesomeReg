@@ -27,11 +27,19 @@ public class TwoStageHashMap<L1Key, L2Key, Value> {
 		
 		if (secondStageHashMap.get(key2) == null) {
 			List<Value> valueList = new ArrayList<Value>();
-			valueList.add(value);
+			
+			if (!valueList.contains(value)) {
+				valueList.add(value);
+			}
+			
 			secondStageHashMap.put(key2, valueList);
 		} else {
 			List<Value> valueList = secondStageHashMap.get(key2);
-			valueList.add(value);
+			
+			if (!valueList.contains(value)) {
+				valueList.add(value);
+			}
+			
 		}
 	}
 	

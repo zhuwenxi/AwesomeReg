@@ -87,6 +87,10 @@ public class FiniteAutomata {
 		return closureSet;
 	}
 	
+	protected void resetStates() {
+		this.nextStateNumber = 0;
+	}
+	
 }
 
 class FiniteAutomataState {
