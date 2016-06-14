@@ -31,6 +31,17 @@ public class FiniteAutomata {
 		this.end = new ArrayList<FiniteAutomataState>();
 	}
 	
+	public boolean isAcceptState(FiniteAutomataState state) {
+		
+		for (FiniteAutomataState acceptState : this.end) {
+			if (acceptState.equals(state)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	protected List<FiniteAutomataState> createStates(int stateCount) {
 		List<FiniteAutomataState> states = new ArrayList<>();
 		

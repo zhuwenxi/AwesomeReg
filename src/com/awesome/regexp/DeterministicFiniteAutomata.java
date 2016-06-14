@@ -10,7 +10,6 @@ import com.awesome.regexp.util.TwoStageHashMap;
 
 public class DeterministicFiniteAutomata extends FiniteAutomata{
 	
-	public TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState> transDiag;
 	public List<FiniteAutomataState> states;
 	
 	private TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, List<FiniteAutomataState>> internalTransDiag;

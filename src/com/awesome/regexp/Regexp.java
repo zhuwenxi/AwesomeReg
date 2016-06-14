@@ -1,9 +1,10 @@
 package com.awesome.regexp;
 
 import java.util.List;
+import java.util.Stack;
 
 public class Regexp {
-	
+
 	private String regexpString;
 	
 	private List<Production> produtions;
@@ -19,6 +20,9 @@ public class Regexp {
 			"Unit->[a-zA-Z0-9]",
 	};
 	
+	private String input;
+	private int index;
+	
 	//
 	// LR Automata for the regular expression:
 	//
@@ -28,6 +32,8 @@ public class Regexp {
 	// Abstract syntax tree:
 	//
 	private AbstractSyntaxTree ast;
+	
+	private FiniteAutomata dfa;
 	
 	
 	public Regexp(){
@@ -53,7 +59,64 @@ public class Regexp {
 		this.ast.root.printSelf(1);
 		
 		FiniteAutomata NFA = new NondeterministicFiniteAutomata(ast);
-		FiniteAutomata DFA = new DeterministicFiniteAutomata(NFA);
+		this.dfa = new DeterministicFiniteAutomata(NFA);
+		
+	}
+	
+	public String match(String input) {
+		this.input = input;
+		this.index = 0;
+		
+		String ret = "";
+		
+		FiniteAutomataState state0 = this.dfa.start;
+		FiniteAutomataState state = state0;
+		
+		Stack<FiniteAutomataState> stateStack = new Stack<FiniteAutomataState>();
+		
+		InputSymbol next = nextChar();
+		
+		while (state != null && next != null) {
+			ret = ret + next;
+			
+			
+			stateStack.push(state);
+			
+			List<FiniteAutomataState> nextStates = this.dfa.transDiag.query(state, next);
+			if (nextStates != null) {
+				state = this.dfa.transDiag.query(state, next).get(0);
+			} else {
+				state = null;
+			}
+			
+			
+			next = nextChar();
+		}
+		
+		
+		while (!this.dfa.isAcceptState(state) && !stateStack.isEmpty()) {
+			state = stateStack.pop();
+			ret = ret.substring(0, ret.length() - 1);
+		}
+		
+		if (this.dfa.isAcceptState(state)) {
+			return ret;
+		} else {
+			return null;
+		}
+	}
+	
+	private InputSymbol nextChar() {
+		
+		if (this.index < this.input.length()) {
+			char ch = this.input.charAt(this.index);
+			this.index ++;
+			
+			return new InputSymbol(ch, ProductionToken.ch);
+		} else {
+			return null;
+		}
+		
 	}
 	
 	@Override 
