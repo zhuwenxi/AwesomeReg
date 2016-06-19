@@ -467,7 +467,7 @@ public class LrAutomata {
 		for (int i = 0; i < input.length(); i ++) {
 			char ch = input.charAt(i);
 			
-			if (ch >= 0 && ch <9 || ch >= 'a' && ch <='z' || ch >= 'A' && ch <= 'Z') {
+			if (ch >= '0' && ch <= '9' || ch >= 'a' && ch <='z' || ch >= 'A' && ch <= 'Z') {
 				this.inputQueue.add(new InputSymbol(ch, ProductionToken.ch));
 			} else if (ch == '*') {
 				this.inputQueue.add(new InputSymbol(ch, ProductionToken.star));

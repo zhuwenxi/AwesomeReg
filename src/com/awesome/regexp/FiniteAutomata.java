@@ -8,7 +8,7 @@ import com.awesome.regexp.util.TwoStageHashMap;
 
 public class FiniteAutomata {
 	
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	
 	public int nextStateNumber;
 	

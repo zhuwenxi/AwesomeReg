@@ -3,25 +3,20 @@ import com.awesome.regexp.*;
 public class Main {
 
 	public static void main(String[] args) {
-//		Regexp regexp = new Regexp("(a|b)*abb");
-//		Regexp regexp = new Regexp("(abcd)*");
-//		Regexp regexp = new Regexp("(a|b)*(abb)");
-//		Regexp regexp = new Regexp("(a||b)*(abb)");
-//		Regexp regexp = new Regexp("(ab)*(cd)*");
-		Regexp regexp = new Regexp("fee|fie");
 		runtests();
 	}
 	
 	private static void runtests() {
-		Regexp regexp = new Regexp("fee|fie");
-		String match = regexp.match("fif");
+		testcase("fee|fie", "fif");		
+		testcase("fee|fie", "feex");		
+		testcase("(a|b)*abb", "aabbabbb");
+		testcase("0x1234", "0x123a");
+	}
+	
+	private static void testcase(String regexpString, String string) {
+		Regexp regexp = new Regexp(regexpString);
+		String match = regexp.match(string);
 		System.out.println(match);
-		match = regexp.match("feex");
-		System.out.println(match);
-		
-		regexp = new Regexp("(a|b)*abb");
-		match = regexp.match("aabbabbb");
-		System.out.println(match);
-	}	
+	}
 
 }

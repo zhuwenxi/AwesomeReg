@@ -56,7 +56,7 @@ public class Regexp {
 		this.ast = this.lrAutomata.parse(regexpString);
 		
 //		System.out.println("Print AST:");
-		this.ast.root.printSelf(1);
+//		this.ast.root.printSelf(1);
 		
 		FiniteAutomata NFA = new NondeterministicFiniteAutomata(ast);
 		this.dfa = new DeterministicFiniteAutomata(NFA);
