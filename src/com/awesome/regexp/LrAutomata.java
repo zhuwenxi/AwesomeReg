@@ -478,7 +478,8 @@ public class LrAutomata {
 			} else if (ch == '|') {
 				this.inputQueue.add(new InputSymbol(ch, ProductionToken.verticalBar));
 			} else {
-				assert false;
+				this.inputQueue.add(new InputSymbol(ch, ProductionToken.verticalBar));
+//				assert false;
 			}
 //			
 		}
