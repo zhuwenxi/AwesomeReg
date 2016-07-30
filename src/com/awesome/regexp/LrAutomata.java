@@ -8,8 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
-public class LrAutomata {
-
+public class LrAutomata {	
 	private ContextFreeGrammar originGrammar;
 	
 	private ContextFreeGrammar grammar;
@@ -478,14 +477,13 @@ public class LrAutomata {
 			} else if (ch == '|') {
 				this.inputQueue.add(new InputSymbol(ch, ProductionToken.verticalBar));
 			} else {
-				this.inputQueue.add(new InputSymbol(ch, ProductionToken.verticalBar));
+				this.inputQueue.add(new InputSymbol(ch, ProductionToken.ch));
 //				assert false;
 			}
 //			
 		}
 		
 		this.inputQueue.add(new InputSymbol(ProductionToken.dollar.text, ProductionToken.dollar));
-		
 		return inputQueue;
 	}
 

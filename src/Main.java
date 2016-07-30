@@ -35,7 +35,7 @@ public class Main {
 					
 				});
 				
-				xit("expect 'a b' matchs 'a b'.", new TestSuite() {
+				it("expect 'a b' matchs 'a b'.", new TestSuite() {
 					public void run() {
 						expect(testcase("a b", "a b")).toBe("a b");
 					}
