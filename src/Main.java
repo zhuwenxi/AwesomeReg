@@ -40,6 +40,18 @@ public class Main {
 						expect(testcase("a b", "a b")).toBe("a b");
 					}
 				});
+				
+				it("expect '\\\\d' matchs '1'.", new TestSuite() {
+					public void run() {
+						expect(testcase("\\d", "1")).toBe("1");
+					}
+				});
+				
+				it("expect 'a\\\\dc' matchs 'a1c'.", new TestSuite() {
+					public void run() {
+						expect(testcase("a\\dc", "1")).toBe("1");
+					}
+				});
 			}
 		});
 		

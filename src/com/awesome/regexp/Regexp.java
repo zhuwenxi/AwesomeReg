@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Stack;
 
 public class Regexp {
-
+	
+	private boolean DEBUG_REGEX = true;
+	
 	private String regexpString;
 	
 	private List<Production> produtions;
@@ -41,6 +43,7 @@ public class Regexp {
 	}
 	
 	public Regexp(String regexpString){
+		regexpString = regexpFormatFixup(regexpString);
 		this.regexpString = regexpString;
 		
 		//
@@ -119,8 +122,42 @@ public class Regexp {
 		
 	}
 	
+	/*
+	 * Formaat fix up to make a regular expression standard one. 
+	 * This could be used to extend the abilities of regular expression. For example:
+	 * 1. Collection: transform "[0-9]" to "(0|1|2|3|4|5|6|7|8|9)"
+	 * 2. Digit: transform "\\d" to "[0-9]"
+	 */
+	private String regexpFormatFixup(String originRegexp) {
+		String fixedupRegexp = originRegexp;
+		
+		fixedupRegexp = extendedRegexpFixup(fixedupRegexp);
+		debugPrint("after extendedRegexpFixup: " + fixedupRegexp);
+		fixedupRegexp = collectionFixedup(fixedupRegexp);
+		
+		return originRegexp;
+	}
+	
+	/*
+	 * Digit: transform "\\d" to "[0-9]"
+	 */
+	private String extendedRegexpFixup(String originRegexp) {
+		return originRegexp.indexOf("\\d") >= 0 ? originRegexp.replaceAll("\\\\d", "[0-9]") : originRegexp;
+	}
+	
+	private String collectionFixedup(String originRegexp) {
+		String fixedupRegexp = originRegexp;
+		return originRegexp;
+	}
+	
 	@Override 
 	public String toString(){
 		return this.regexpString;
+	}
+	
+	private void debugPrint(String log) {
+		if (DEBUG_REGEX) {
+			System.out.println(log);
+		}
 	}
 }
