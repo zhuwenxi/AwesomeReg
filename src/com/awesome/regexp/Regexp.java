@@ -1,5 +1,6 @@
 package com.awesome.regexp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -134,6 +135,7 @@ public class Regexp {
 		fixedupRegexp = extendedRegexpFixup(fixedupRegexp);
 		debugPrint("after extendedRegexpFixup: " + fixedupRegexp);
 		fixedupRegexp = collectionFixedup(fixedupRegexp);
+		debugPrint("after collectionFixedup: " + fixedupRegexp);
 		
 		return originRegexp;
 	}
@@ -145,9 +147,56 @@ public class Regexp {
 		return originRegexp.indexOf("\\d") >= 0 ? originRegexp.replaceAll("\\\\d", "[0-9]") : originRegexp;
 	}
 	
+	/*
+	 * Collection: transform "[0-9]" to "(0|1|2|3|4|5|6|7|8|9)"
+	 */
 	private String collectionFixedup(String originRegexp) {
 		String fixedupRegexp = originRegexp;
-		return originRegexp;
+		ArrayList<Character> collection = new ArrayList<>();
+		
+		for (int i = 0; i < fixedupRegexp.length(); i ++) {
+			char current = fixedupRegexp.charAt(i);
+			
+			if (current == '-') {
+				if (i != 0 && i != fixedupRegexp.length() - 1) {
+					char start = fixedupRegexp.charAt(i - 1);
+					char end = fixedupRegexp.charAt(i + 1);
+					if (start < end) {
+						while (start <= end) {
+							if (!collection.contains(start)) {
+								collection.add(start);
+							}
+							start ++;
+						}
+					} else {
+						// Not a valid collection: start < end.
+						assert false;
+					}
+				} else {
+					// Not a valid collection: "-" appears at the head or tail of the collection.
+					assert false;
+				}
+			} else {
+				if (!collection.contains(current)) {
+					collection.add(current);
+				}
+			}
+		}
+		
+		// Make up the format string, e.ge. convert the collection "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]" to "(0|1|2|3|4|5|6|7|8|9)"
+		fixedupRegexp = "";
+		
+		for (char c : collection) {
+			if (fixedupRegexp.length() == 0) {
+				fixedupRegexp += c;
+			} else {
+				fixedupRegexp = fixedupRegexp + "|" + c;
+			}
+		}
+		
+		fixedupRegexp = "(" + fixedupRegexp + ")";
+		
+		return fixedupRegexp;
 	}
 	
 	@Override 
