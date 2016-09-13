@@ -144,7 +144,15 @@ public class Regexp {
 	 * Digit: transform "\\d" to "[0-9]"
 	 */
 	private String extendedRegexpFixup(String originRegexp) {
-		return originRegexp.indexOf("\\d") >= 0 ? originRegexp.replaceAll("\\\\d", "[0-9]") : originRegexp;
+		String fixedupRegexp = originRegexp;
+		int index = fixedupRegexp.indexOf("\\d");
+		
+		while (index >= 0) {
+			fixedupRegexp = fixedupRegexp.substring(0, index) + "[0-9]" + fixedupRegexp.substring(index + 2);
+			
+			index = fixedupRegexp.indexOf("\\d");
+		}
+		return fixedupRegexp;
 	}
 	
 	/*

@@ -52,6 +52,12 @@ public class Main {
 						expect(testcase("a\\dc", "1")).toBe("1");
 					}
 				});
+				
+				it("expect a\\\\db\\\\d matchs 'a1b2'.", new TestSuite() {
+					public void run() {
+						expect(testcase("a\\dc\\d", "1")).toBe("1");
+					}
+				});
 			}
 		});
 		
