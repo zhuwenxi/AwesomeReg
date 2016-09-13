@@ -44,6 +44,7 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 //		printDebugLog(this.internalStates);
 //		printDebugLog("DIAGS: ");
 //		printDebugLog(this.internalTransDiag);
+		printDebugLog("DFA info:");
 		printDebugLog(this.states);
 		printDebugLog(this.transDiag);
 		

@@ -49,13 +49,13 @@ public class Main {
 				
 				it("expect 'a\\\\dc' matchs 'a1c'.", new TestSuite() {
 					public void run() {
-						expect(testcase("a\\dc", "1")).toBe("1");
+						expect(testcase("a\\dc", "a1c")).toBe("a1c");
 					}
 				});
 				
 				it("expect a\\\\db\\\\d matchs 'a1b2'.", new TestSuite() {
 					public void run() {
-						expect(testcase("a\\dc\\d", "1")).toBe("1");
+						expect(testcase("a\\db\\d", "a1b2")).toBe("a1b2");
 					}
 				});
 			}

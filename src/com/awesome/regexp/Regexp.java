@@ -6,7 +6,7 @@ import java.util.Stack;
 
 public class Regexp {
 	
-	private boolean DEBUG_REGEX = true;
+	private boolean DEBUG_REGEX = false;
 	
 	private String regexpString;
 	
@@ -106,6 +106,7 @@ public class Regexp {
 		if (this.dfa.isAcceptState(state)) {
 			return ret;
 		} else {
+			debugPrint("Final state: " + state);
 			return null;
 		}
 	}
@@ -133,11 +134,11 @@ public class Regexp {
 		String fixedupRegexp = originRegexp;
 		
 		fixedupRegexp = extendedRegexpFixup(fixedupRegexp);
-		debugPrint("after extendedRegexpFixup: " + fixedupRegexp);
+//		debugPrint("after extendedRegexpFixup: " + fixedupRegexp);
 		fixedupRegexp = collectionFixedup(fixedupRegexp);
 		debugPrint("after collectionFixedup: " + fixedupRegexp);
 		
-		return originRegexp;
+		return fixedupRegexp;
 	}
 	
 	/*
@@ -160,15 +161,46 @@ public class Regexp {
 	 */
 	private String collectionFixedup(String originRegexp) {
 		String fixedupRegexp = originRegexp;
-		ArrayList<Character> collection = new ArrayList<>();
+		int collectionStart = 0;
+		int collectionEnd = 0;
+		boolean isInCollection = false;
+		boolean hasCollectionInRegexp = fixedupRegexp.indexOf('[') >= 0;
 		
-		for (int i = 0; i < fixedupRegexp.length(); i ++) {
-			char current = fixedupRegexp.charAt(i);
+		while (hasCollectionInRegexp) {
+			for (int i = 0; i < fixedupRegexp.length(); i ++) {
+				char current = fixedupRegexp.charAt(i);
+				
+				if (current == '[') {
+					assert isInCollection == false;
+					isInCollection = true;
+					collectionStart = i + 1;
+					
+				} else if (current == ']'){
+					assert isInCollection == true;
+					isInCollection = false;
+					collectionEnd = i;
+					
+					String collectionStr = fixedupRegexp.substring(collectionStart, collectionEnd);
+					String replaceStr = collectionToStandardRegexp(collectionStr);
+					fixedupRegexp = fixedupRegexp.substring(0, collectionStart - 1) + replaceStr + fixedupRegexp.substring(collectionEnd + 1);
+				} 
+			}
+			
+			hasCollectionInRegexp = fixedupRegexp.indexOf('[') >= 0;
+		}
+		
+		return fixedupRegexp;
+	}
+	
+	private String collectionToStandardRegexp(String collectionStr) {
+		ArrayList<Character> collection = new ArrayList<>();
+		for (int i = 0; i < collectionStr.length(); i ++) {
+			char current = collectionStr.charAt(i);
 			
 			if (current == '-') {
-				if (i != 0 && i != fixedupRegexp.length() - 1) {
-					char start = fixedupRegexp.charAt(i - 1);
-					char end = fixedupRegexp.charAt(i + 1);
+				if (i != 0 && i != collectionStr.length() - 1) {
+					char start = collectionStr.charAt(i - 1);
+					char end = collectionStr.charAt(i + 1);
 					if (start < end) {
 						while (start <= end) {
 							if (!collection.contains(start)) {
@@ -192,19 +224,19 @@ public class Regexp {
 		}
 		
 		// Make up the format string, e.ge. convert the collection "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]" to "(0|1|2|3|4|5|6|7|8|9)"
-		fixedupRegexp = "";
-		
+		collectionStr = "";
+				
 		for (char c : collection) {
-			if (fixedupRegexp.length() == 0) {
-				fixedupRegexp += c;
+			if (collectionStr.length() == 0) {
+				collectionStr += c;
 			} else {
-				fixedupRegexp = fixedupRegexp + "|" + c;
+				collectionStr = collectionStr + "|" + c;
 			}
 		}
-		
-		fixedupRegexp = "(" + fixedupRegexp + ")";
-		
-		return fixedupRegexp;
+				
+		collectionStr = "(" + collectionStr + ")";
+				
+		return collectionStr;
 	}
 	
 	@Override 
