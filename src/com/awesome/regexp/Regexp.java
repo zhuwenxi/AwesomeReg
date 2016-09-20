@@ -89,12 +89,16 @@ public class Regexp {
 			List<FiniteAutomataState> nextStates = this.dfa.transDiag.query(state, next);
 			if (nextStates != null) {
 				state = this.dfa.transDiag.query(state, next).get(0);
-			} else {
+			} else if (this.dfa.isAcceptState(state)){
 				state = null;
+			} else {
+				state = state0;
+				stateStack = new Stack<FiniteAutomataState>();
+				ret = "";
 			}
 			
-			
 			next = nextChar();
+			System.out.println("loop end.");
 		}
 		
 		

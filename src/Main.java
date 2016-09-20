@@ -58,6 +58,18 @@ public class Main {
 						expect(testcase("a\\db\\d", "a1b2")).toBe("a1b2");
 					}
 				});
+				
+				it("expect 'ab' matchs 'cabd'.", new TestSuite() {
+					public void run() {
+						expect(testcase("ab", "cabd")).toBe("ab");
+					}
+				});
+				
+				it("expect 'ab*' matchs 'abbb'.", new TestSuite() {
+					public void run() {
+						expect(testcase("ab*", "abbb")).toBe("abbb");
+					}
+				});
 			}
 		});
 		
