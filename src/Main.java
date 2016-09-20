@@ -70,6 +70,18 @@ public class Main {
 						expect(testcase("ab*", "abbb")).toBe("abbb");
 					}
 				});
+				
+				it("expect '[_a-zA-Z][_0-9a-zA-Z]*' matchs 'int ret_val = 0'.", new TestSuite() {
+					public void run() {
+						expect(testcase("[_a-zA-Z][_0-9a-zA-Z]*", "int ret_val = 0")).toBe("int");
+					}
+				});
+				
+				it("expect '[_a-zA-Z][_0-9a-zA-Z]*' matchs 'ret_val = 1'.", new TestSuite() {
+					public void run() {
+						expect(testcase("[_a-zA-Z][_0-9a-zA-Z]*", "ret_val = 1")).toBe("ret_val");
+					}
+				});
 			}
 		});
 		

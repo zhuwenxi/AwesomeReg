@@ -98,7 +98,6 @@ public class Regexp {
 			}
 			
 			next = nextChar();
-			System.out.println("loop end.");
 		}
 		
 		
