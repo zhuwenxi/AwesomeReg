@@ -5,23 +5,18 @@ import java.util.List;
 import java.util.Stack;
 
 public class Regexp {
-	
-	private boolean DEBUG_REGEX = false;
-	
 	private String regexpString;
-	
-	private List<Production> produtions;
-	
-	static private String[] regexpGrammarStrings = {
-			"Regexp->{Regexp}|{Concat}",
-			"Regexp->{Concat}",
-			"Concat->{Concat}{Repeat}",
-			"Concat->{Repeat}",
-			"Repeat->{Unit}",
-			"Repeat->{Unit}*",
-			"Unit->({Regexp})",
-			"Unit->[a-zA-Z0-9]",
-	};
+		
+//	static private String[] regexpGrammarStrings = {
+//			"Regexp->{Regexp}|{Concat}",
+//			"Regexp->{Concat}",
+//			"Concat->{Concat}{Repeat}",
+//			"Concat->{Repeat}",
+//			"Repeat->{Unit}",
+//			"Repeat->{Unit}*",
+//			"Unit->({Regexp})",
+//			"Unit->[a-zA-Z0-9]",
+//	};
 	
 	private String input;
 	private int index;
@@ -36,6 +31,9 @@ public class Regexp {
 	//
 	private AbstractSyntaxTree ast;
 	
+    /*
+     * Deterministic Finite Automata:
+     */
 	private FiniteAutomata dfa;
 	
 	
@@ -44,14 +42,17 @@ public class Regexp {
 	}
 	
 	public Regexp(String regexpString){
-		regexpString = regexpFormatFixup(regexpString);
+		Logger.println(Config.RegexpVerbose, "Input parameter passed to Regexp(): " + regexpString);
+		
 		this.regexpString = regexpString;
+		regexpString = regexpFormatFixup(regexpString);
+		
+		Logger.println(Config.RegexpVerbose, "After format fixup:                 " + regexpString);
 		
 		//
-		// Construct LR-automata:
+		// Construct LR-automata.
 		// 
 		ContextFreeGrammar grammar = new RegularExpressionContextFreeGrammar();
-//		System.out.println(grammar);
 		this.lrAutomata = new LrAutomata(grammar);
 		
 		//
@@ -109,7 +110,6 @@ public class Regexp {
 		if (this.dfa.isAcceptState(state)) {
 			return ret;
 		} else {
-			debugPrint("Final state: " + state);
 			return null;
 		}
 	}
@@ -137,9 +137,7 @@ public class Regexp {
 		String fixedupRegexp = originRegexp;
 		
 		fixedupRegexp = extendedRegexpFixup(fixedupRegexp);
-//		debugPrint("after extendedRegexpFixup: " + fixedupRegexp);
 		fixedupRegexp = collectionFixedup(fixedupRegexp);
-		debugPrint("after collectionFixedup: " + fixedupRegexp);
 		
 		return fixedupRegexp;
 	}
@@ -245,11 +243,5 @@ public class Regexp {
 	@Override 
 	public String toString(){
 		return this.regexpString;
-	}
-	
-	private void debugPrint(String log) {
-		if (DEBUG_REGEX) {
-			System.out.println(log);
-		}
 	}
 }
