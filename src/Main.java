@@ -7,7 +7,6 @@ import com.awesome.regexp.util.AwesomeTestcase;
 public class Main {
 
 	public static void main(String[] args) {
-		
 		Moli.describe("Test suites for AwesomeReg", new TestSuites() {
 			public void run() {
 				it("expect 'fee|fie' doesn't match 'fif'.", new TestSuite() {
@@ -84,16 +83,6 @@ public class Main {
 				});
 			}
 		});
-		
-//		AwesomeTest Testcases = new AwesomeTest();
-//		
-//		Testcases.addCase(buildTestcase("fee|fie", "fif", null));
-//		Testcases.addCase(buildTestcase("fee|fie", "feex", "fee"));
-//		Testcases.addCase(buildTestcase("(a|b)*abb", "aabbabbb", "aabbabb"));
-//		Testcases.addCase(buildTestcase("0x1234", "0x123a", null));
-//		Testcases.addCase(buildTestcase("a b", "a b", "a b"));
-//		
-//		Testcases.run();
 	}
 	
 	private static String testcase(String regexpString, String string) {
