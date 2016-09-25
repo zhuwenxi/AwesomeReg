@@ -13,6 +13,6 @@ public class Logger {
 	
 	public static void println(boolean config, Object msg) {
 		print(config, msg);
-		print("\n");
+		print(config, "\n");
 	}
 }
