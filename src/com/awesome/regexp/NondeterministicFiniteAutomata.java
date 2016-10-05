@@ -1,6 +1,5 @@
 package com.awesome.regexp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NondeterministicFiniteAutomata extends FiniteAutomata {

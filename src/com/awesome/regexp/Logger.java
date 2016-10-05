@@ -15,4 +15,23 @@ public class Logger {
 		print(config, msg);
 		print(config, "\n");
 	}
+	
+	/*
+	 * Print with tag.
+	 */
+	public static void tprint(boolean config, Object msg, String tag) {
+		if (config) {
+			println(config, "{ =========================  " + tag + "\n");
+			println(config, msg);
+			println(config,  "\n========================= } End\n");
+		}
+	}
+	
+	public static void tprint(boolean config, DebugCode dbcode, String tag) {
+		if (config) {
+			println(config, "{ =========================  " + tag + "\n");
+			dbcode.code();
+			println(config,  "\n========================= } End\n");
+		}
+	}
 }

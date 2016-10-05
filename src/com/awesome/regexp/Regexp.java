@@ -7,6 +7,13 @@ import java.util.Stack;
 public class Regexp {
 	private String regexpString;
 		
+	/*
+	 * The context-free grammar which describes regular-expression listed below.
+	 * AwesomeReg supports the 3 very basic form of the typical regular-expression:
+	 * 1. Alter: a|b
+	 * 2. Concat: ab
+	 * 3. Repeat: *
+	 */
 //	static private String[] regexpGrammarStrings = {
 //			"Regexp->{Regexp}|{Concat}",
 //			"Regexp->{Concat}",
@@ -42,29 +49,46 @@ public class Regexp {
 	}
 	
 	public Regexp(String regexpString){
-		Logger.println(Config.RegexpVerbose, "Input parameter passed to Regexp(): " + regexpString);
 		
 		this.regexpString = regexpString;
-		regexpString = regexpFormatFixup(regexpString);
+		Logger.tprint(Config.RegexpVerbose, regexpString, "Input parameter passed to Regexp()");		
 		
-		Logger.println(Config.RegexpVerbose, "After format fixup:                 " + regexpString);
+		regexpString = regexpFormatFixup(regexpString);		
+		Logger.tprint(Config.RegexpVerbose, regexpString, "After format fixup");
 		
 		//
-		// Construct LR-automata.
+		// Construct LR-automata for parsing a regexp, such as "(a|b)*abb".
 		// 
 		ContextFreeGrammar grammar = new RegularExpressionContextFreeGrammar();
+		Logger.tprint(Config.ContextFreeGrammarVerbose, grammar, "Context-free grammar");
+		
 		this.lrAutomata = new LrAutomata(grammar);
 		
+		
 		//
-		// Generate AST:
+		// Generate AST.
 		//
 		this.ast = this.lrAutomata.parse(regexpString);
+		Logger.tprint(Config.AstVerbose, new DebugCode() {
+
+			@Override
+			public void code() {
+				ast.root.printSelf(0);
+			}
+			
+		}, "AST for regular-expression");
 		
-//		System.out.println("Print AST:");
-//		this.ast.root.printSelf(1);
-		
+		// 
+		// Generate NFA from AST.
+		// 
 		FiniteAutomata NFA = new NondeterministicFiniteAutomata(ast);
+		Logger.tprint(Config.NfaVerbose, NFA.transDiag, "NFA transform diagram");
+		
+		//
+		// Generate DFA from NFA.
+		// 
 		this.dfa = new DeterministicFiniteAutomata(NFA);
+		Logger.tprint(Config.DfaVerbose, dfa.transDiag, "DFA transform diagram");
 		
 	}
 	

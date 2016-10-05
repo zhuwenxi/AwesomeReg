@@ -95,13 +95,7 @@ public class AbstractSyntaxTree {
 			}
 		}
 		
-		private void printSpace(int numOfSpace) {
-			assert numOfSpace >= 0;
-			for (int i = 0; i < numOfSpace; i ++) {
-				System.out.print(" ");
-			}
-		}
-	}
+	}	
 	
 	
 	

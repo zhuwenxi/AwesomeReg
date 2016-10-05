@@ -42,24 +42,15 @@ public class LrAutomata {
 		
 		this.originGrammar = (ContextFreeGrammar)grammar.clone();
 		this.grammar = addDotPrefix(grammar);
-		
-//		System.out.println(this.originGrammar);
-//		System.out.println(this.grammar);
-		
+				
 		this.states = constructStates(this.grammar);
 
 		constructActionTable();
 		
-//		System.out.println("======================== action table ==========================\n");
-//		System.out.println(this.actionTable);
-//		System.out.println("======================== action table end ======================\n");
-//		System.out.println("======================== states ==========================\n");
-//		printStates();
-//		System.out.println("======================== goto table ============================\n");
-//		System.out.println(this.gotoTable);
-//		System.out.println("======================== goto table end ============================\n");
+		Logger.tprint(Config.LrAutomataVerbose && Config.ActionTableVerbose, this.actionTable, "Action table");
+		Logger.tprint(Config.LrAutomataVerbose, this.states, "States of LrAutomata");
+		Logger.tprint(Config.LrAutomataVerbose && Config.GotoTableVerbose, this.gotoTable, "Goto table");
 		
-//		System.out.println(follow(new ProductionToken("Regexp", false)));
 	}
 
 	public AbstractSyntaxTree parse(String input) {
@@ -665,15 +656,15 @@ class Action {
 		String ret = new String();
 		
 		if (this.shift) {
-			ret += "SHIFT:\n";
+			ret += "SHIFT -> ";
 			ret += shiftTo.toString();
 		} else if (this.reduce){
-			ret += "REDUCE:\n";
+			ret += "REDUCE -> ";
 			ret += prodToReduce.toString();
 		} else if (this.accept) {
-			ret += "ACCEPT:\n";
+			ret += "ACCEPT";
 		} else if (this.error) {
-			ret += "ERROR:\n";
+			ret += "ERROR";
 		} else {
 			assert false;
 		}
@@ -732,19 +723,22 @@ class GotoTable extends Table {
 				ProductionToken symbol = hashBySymbolEntry.getKey();
 				State target = hashBySymbolEntry.getValue();
 
-				retStr += "Origin:\n";
-				retStr += origin.toString();
+//				retStr += "Origin:\n";
+//				retStr += origin.toString();
+//				retStr += "\n";
+//
+//				retStr += "Symbol:\n";
+//				retStr += symbol.toString();
+//				retStr += "\n";
+//
+//				retStr += "Target:\n";
+//				retStr += target.toString();
+//				retStr += "\n";
+//
+//				retStr += "=================================================================\n";
+				
+				retStr += String.format("( %s, %s ) = ( %s)", origin.toString(), symbol.toString(), target.toString());
 				retStr += "\n";
-
-				retStr += "Symbol:\n";
-				retStr += symbol.toString();
-				retStr += "\n";
-
-				retStr += "Target:\n";
-				retStr += target.toString();
-				retStr += "\n";
-
-				retStr += "=================================================================\n";
 			}
 		}
 		return retStr;
@@ -830,19 +824,8 @@ class ActionTable {
 				ProductionToken symbol = hashBySymbolEntry.getKey();
 				Action target = hashBySymbolEntry.getValue();
 
-				retStr += "State:\n";
-				retStr += state.toString();
+				retStr += String.format("( %s, %s ) = ( %s )", state.toString(), symbol.toString(), target.toString());
 				retStr += "\n";
-
-				retStr += "Symbol:\n";
-				retStr += symbol.toString();
-				retStr += "\n";
-
-				retStr += "Action:\n";
-				retStr += target.toString();
-				retStr += "\n";
-
-				retStr += "=================================================================\n";
 			}
 		}
 		return retStr;
