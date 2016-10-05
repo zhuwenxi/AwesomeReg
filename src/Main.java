@@ -90,11 +90,5 @@ public class Main {
 		String match = regexp.match(string);
 		return match;
 	}
-	
-	private static AwesomeTestcase buildTestcase(String regexpString, String string, String expectedValue) {
-		Regexp regexp = new Regexp(regexpString);
-		String match = regexp.match(string);
-		return new AwesomeTestcase(match, expectedValue);
-	}
 
 }
