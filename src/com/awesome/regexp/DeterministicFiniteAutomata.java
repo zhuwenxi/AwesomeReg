@@ -40,10 +40,6 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		
 		minifyStates();
 		
-//		printDebugLog("STATES: ");
-//		printDebugLog(this.internalStates);
-//		printDebugLog("DIAGS: ");
-//		printDebugLog(this.internalTransDiag);
 		printDebugLog("DFA info:");
 		printDebugLog(this.states);
 		printDebugLog(this.transDiag);
@@ -51,7 +47,6 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		printDebugLog(this.start);
 		printDebugLog(this.end);
 		
-//		printDebugLog(this.start + "," + this.end);
 	}
 	
 	/*
@@ -70,7 +65,6 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		this.internalStates.add(dfaState0);
 		this.internalStart = dfaState0;
 		
-//		printDebugLog(dfaState0);
 		
 		workList.add(dfaState0);
 		Q.add(dfaState0);
@@ -104,18 +98,6 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 						
 						workList.add(newDfaState);
 						Q.add(newDfaState);
-//						printDebugLog("New state:");
-//						printDebugLog(newDfaState);
-//						
-//						printDebugLog("after Q:");
-//						printDebugLog(Q);
-//						printDebugLog("");
-						
-						
-//						printDebugLog("~~~~~~~~~~~~~ diag start ~~~~~~~~~~~");
-//						printDebugLog(this.internalTransDiag);
-//						printDebugLog("~~~~~~~~~~~~~~ diag end ~~~~~~~~~~");
-						
 					}
 				}
 			}
@@ -173,24 +155,16 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 				List<FiniteAutomataState> partition = lastPartitions.get(i);
 				
 				List<List<FiniteAutomataState>> newPartitions = splitPartition(partition, lastPartitions);
-					
-//				printDebugLog("================= Parition ===================");
-//				printDebugLog(partition);
-//				printDebugLog("================= After Split ===================");
-//				printDebugLog(newPartitions);
-					
+										
 				partitions.addAll(newPartitions);
 			}
 		}
-		
-//		printDebugLog(partitions);
-		
+				
 		renameParitionToState(partitions);
 	}
 	
 	private List<List<FiniteAutomataState>> splitPartition(List<FiniteAutomataState> partition, List<List<FiniteAutomataState>> lastPartitions) {
 		List<List<FiniteAutomataState>> newPartitions = new ArrayList<List<FiniteAutomataState>>();
-//		TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, FiniteAutomataState> partitionMap = new TwoStageHashMap<List<FiniteAutomataState>, InputSymbol, FiniteAutomataState>();
 		List<FiniteAutomataState> s1 = null;
 		List<FiniteAutomataState> s2 = null;
 		

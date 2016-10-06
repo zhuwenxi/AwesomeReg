@@ -88,12 +88,9 @@ public class LrAutomata {
 		// Let a be the first symbol of input symbol queue.
 		InputSymbol next = inputQueue.poll();
 
-		while (true /*action != Action.ACCEPT && action != Action.ERROR*/) {
+		while (true) {
 			
-//			System.out.println("============================= parse() ===========================");
 			State state = this.stateStack.peek();
-//			System.out.println("state: " + state);
-//			System.out.println("input: " + next.face);
 			
 			action = this.actionTable.nextAction(state, next.type);
 			
@@ -106,14 +103,9 @@ public class LrAutomata {
 				this.stateStack.push(shiftTo);
 				
 				symbolStack.push(next);
-				
-//				System.out.println("shift: " + shiftTo);
-//				System.out.println(symbolStack);
-				
+								
 				// Update astStack.
 				AbstractSyntaxTree.TreeNode newNode = new AbstractSyntaxTree.TreeNode(next);
-//				System.out.println("shift node:");
-//				newNode.printSelf(1);
 				astStack.push(newNode);
 				
 				next = inputQueue.poll();
@@ -126,8 +118,6 @@ public class LrAutomata {
 				
 				for (int i = prodToReduce.body.size() - 2; i >= 0 ; i --) {
 					ProductionToken lastProductionToken = prodToReduce.body.get(i);
-//					Symbol symbol = this.inputQueue.pop();
-//					assert symbol.type == lastProductionToken;
 					this.stateStack.pop();
 					
 					symbolStack.pop();
@@ -141,9 +131,6 @@ public class LrAutomata {
 				// Update astStack.
 				if (prodToReduce.operator != null) {
 					newNode.operator = prodToReduce.operator;
-//					if (prodToReduce.operator == AbstractSyntaxTree.Operator.UNIT) {
-//						System.out.println("~~~~~~~~~~~~~~");
-//					}
 					
 					if (prodToReduce.leftOperandIndex > -1) {
 						newNode.leftOperand = tmpAstStack.get(tmpAstStack.size() - prodToReduce.leftOperandIndex - 1);
@@ -153,10 +140,6 @@ public class LrAutomata {
 						newNode.rightOperand = tmpAstStack.get(tmpAstStack.size() - prodToReduce.rightOperandIndex - 1);
 					}
 					
-//					System.out.println("reduce node:");
-//					System.out.println("~~~~~~~~~~~~~~~AST start~~~~~~~~~~~~~~~");
-//					newNode.printSelf(1);
-//					System.out.println("~~~~~~~~~~~~~~~AST end~~~~~~~~~~~~~~~");
 					astStack.push(newNode);
 				}
 				
@@ -167,24 +150,17 @@ public class LrAutomata {
 				this.stateStack.push(this.gotoTable.nextState(topState, prodToReduce.head));
 				
 				symbolStack.push(new InputSymbol(prodToReduce.head.text, prodToReduce.head));
-				
-//				System.out.println("reduce: " + action.prodToReduce);
-//				System.out.println(symbolStack);
-				
+								
 				// Output thr production A -> B
 			} else if (action.accept) {
-//				System.out.println("accept");
 				break;
 			} else if (action.error) {
 				// Call error-recovery routine.
 				break;
 			}
-//			System.out.println("===================== Divider ========================\n");
 		}
 		
 		
-//		AbstractSyntaxTree.TreeNode astNode = astStack.peek();
-//		astNode.printSelf(0);
 		return new AbstractSyntaxTree(astStack.pop());
 	}
 
@@ -240,10 +216,6 @@ public class LrAutomata {
 				for (ProductionToken symbol : this.symbols) {
 					State targetState = transfor(originState, symbol);
 
-					// System.out.println("origin:" + originState);
-					// System.out.println("symbol:" + symbol);
-					// System.out.println("target:" + targetState);
-
 					if (targetState != null && !states.contains(targetState)) {
 						states.add(targetState);
 					}
@@ -290,9 +262,6 @@ public class LrAutomata {
 					if (symbolNextToDot.isTerminal == true) {
 						State shiftTo = nextState(state, symbolNextToDot);
 						
-//						if (symbolNextToDot.text.equals(")")) {
-//							System.out.println(symbolNextToDot);
-//						}
 						action = new Action("SHIFT");
 						action.shiftTo = shiftTo;
 						
@@ -340,29 +309,21 @@ public class LrAutomata {
 	}
 
 	private State closure(State state) {
-		// return state;
-		// System.out.println("before: " + state);
 		for (int i = 0; i < state.items.size(); i++) {
 			Production item = state.items.get(i);
 			ProductionToken symbolNextToDot = this.getSymbolNextToDot(item);
 
-			// System.out.println("symbol: " + symbolNextToDot);
-
 			for (Production grammarItem : this.grammar.productions) {
-				// System.out.println("grammar item:" + grammarItem);
 				if (grammarItem.head.equals(symbolNextToDot) && !state.contains(grammarItem)) {
-					// System.out.println("grammarItem:" + grammarItem);
 					state.add(grammarItem);
 				}
 			}
 		}
 
-		// System.out.println("closure:" + state + "\n");
 		return state;
 	}
 
 	private List<ProductionToken> follow(ProductionToken symbol) {
-//		System.out.println("follow():\nsymbol:" + symbol);
 		List<ProductionToken> followSet = new ArrayList<ProductionToken>();
 
 		// 1. Place $ in FOLLOW(S), where S is the start symbol, and $ is the
@@ -419,12 +380,10 @@ public class LrAutomata {
 
 		}
 		
-//		System.out.println("follow(symbol): \n" + followSet);
 		return followSet;
 	}
 
 	private List<ProductionToken> first(ProductionToken symbol) {
-//		System.out.println("first():\nsymbol: " + symbol);
 		List<ProductionToken> firstSet = new ArrayList<ProductionToken>();
 		
 		if (this.traceFirstFunc.contains(symbol)) {
@@ -608,7 +567,6 @@ class State {
 	@Override
 	public int hashCode() {
 		return this.items.hashCode();
-//		return 100;
 	}
 }
 
@@ -684,9 +642,7 @@ class GotoTable extends Table {
 		if (secondaryMap != null) {
 			if (secondaryMap.get(symbol) == null) {
 				secondaryMap.put(symbol, target);
-			} else {
-//				assert false;
-			}
+			} 
 		} else {
 			// Should not get here.
 			assert false;
@@ -718,20 +674,6 @@ class GotoTable extends Table {
 			for (Entry<ProductionToken, State> hashBySymbolEntry : hashBySymbol.entrySet()) {
 				ProductionToken symbol = hashBySymbolEntry.getKey();
 				State target = hashBySymbolEntry.getValue();
-
-//				retStr += "Origin:\n";
-//				retStr += origin.toString();
-//				retStr += "\n";
-//
-//				retStr += "Symbol:\n";
-//				retStr += symbol.toString();
-//				retStr += "\n";
-//
-//				retStr += "Target:\n";
-//				retStr += target.toString();
-//				retStr += "\n";
-//
-//				retStr += "=================================================================\n";
 				
 				retStr += String.format("( %s, %s ) = ( %s)", origin.toString(), symbol.toString(), target.toString());
 				retStr += "\n";
@@ -751,15 +693,6 @@ class ActionTable {
 
 	public void update(State state, ProductionToken symbol, Action action) {
 		assert action != null;
-		
-//		if (action == Action.REDUCE) {
-//			System.out.println("++++++++++++++++++++++++++++++");
-//			System.out.println("update():");
-//			System.out.println(state);
-//			System.out.println(symbol);
-//			System.out.println(action);
-//			System.out.println("++++++++++++++++++++++++++++++");
-//		}
 		
 		if (!this.impl.containsKey(state)) {
 			this.impl.put(state, new HashMap<ProductionToken, Action>());
@@ -793,13 +726,6 @@ class ActionTable {
 		Map<ProductionToken, Action> secondaryMap = this.impl.get(state);
 
 		if (secondaryMap != null) {
-//			for (ProductionToken key : secondaryMap.keySet()) {
-//				assert key.equals(symbol);
-//				assert key.hashCode() == symbol.hashCode();
-//				assert secondaryMap.containsKey(symbol);
-//			}
-//			assert secondaryMap.keySet().contains(symbol);
-//			assert secondaryMap.containsKey(symbol);
 			return secondaryMap.get(symbol);
 		} else {
 			// Should not get here.

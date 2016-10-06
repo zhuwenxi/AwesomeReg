@@ -40,23 +40,7 @@ public class ProductionToken {
 		dot = new ProductionToken("DOT", true);
 		dot.isDotSymbol = true;
 		
-//		ch = new ProductionToken("[0-1a-zA-Z]");
 		ch = new ProductionToken("Char");
-		
-//		ch.isCollection = true;
-//		ch.collection = new ArrayList<Character>();
-//		
-//		for (char c = '0'; c <= '9'; c++){
-//			ch.collection.add(c);
-//		}
-//		
-//		for (char c = 'a'; c <= 'z'; c++){
-//			ch.collection.add(c);
-//		}
-//		
-//		for (char c = 'A'; c <= 'Z'; c++){
-//			ch.collection.add(c);
-//		}
 		
 		star = new ProductionToken("*", true);
 		

@@ -51,29 +51,19 @@ public class AbstractSyntaxTree {
 		}
 		
 		public void printSelf(int level) {
-//			for (int i = 0; i < level; i ++) {
-//				if (i == level - 1) {
-//					System.out.print("|______");
-//				} else {
-//					System.out.print("	");
-//				}
-//			}
 			
 			if (this.operator != null) {
 				System.out.println(this.operator);
-//				printSpace(this.operator.toString().length());
 			}
 			
 			if (this.text != null) {
 				System.out.println(this.text);
-//				printSpace(this.text.toString().length());
 			}
 			
 			if (this.leftOperand != null) {
 				for (int i = 0; i < level; i ++) {
 					if (i == level - 1) {
 						System.out.print(">>>>>> ");
-//						System.out.print("	");
 					} else {
 						System.out.print("          ");
 					}
@@ -86,7 +76,6 @@ public class AbstractSyntaxTree {
 				for (int i = 0; i < level; i ++) {
 					if (i == level - 1) {
 						System.out.print(">>>>>> ");
-//						System.out.print("	");
 					} else {
 						System.out.print("          ");
 					}

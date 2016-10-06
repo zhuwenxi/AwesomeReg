@@ -95,12 +95,7 @@ public class NondeterministicFiniteAutomata extends FiniteAutomata {
 	}
 	
 	private TransDiagStartAndEnd constructConcat(TransDiagStartAndEnd leftDiag, TransDiagStartAndEnd rightDiag) {
-		this.transDiag.update(leftDiag.endState, InputSymbol.epsilon, rightDiag.startState);
-		
-//		printDebugLog("=========== Trans Diag Start ==========");
-//		printDebugLog(this.transDiag.toString()); 
-//		printDebugLog("=========== Trans Diag End ==========");
-		
+		this.transDiag.update(leftDiag.endState, InputSymbol.epsilon, rightDiag.startState);		
 		return new TransDiagStartAndEnd(leftDiag.startState, rightDiag.endState);
 	}
 	
@@ -139,9 +134,6 @@ public class NondeterministicFiniteAutomata extends FiniteAutomata {
 		FiniteAutomataState state2 = states.get(1);
 		
 		this.transDiag.update(state1, symbol, state2);
-//		printDebugLog("=========== Trans Diag Start ==========");
-//		printDebugLog(this.transDiag.toString()); 
-//		printDebugLog("=========== Trans Diag End ==========");
 		
 		return new TransDiagStartAndEnd(state1, state2);
 	}
