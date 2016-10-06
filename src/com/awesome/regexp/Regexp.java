@@ -50,22 +50,22 @@ public class Regexp {
 	
 	public Regexp(String regexpString){
 		// Set all options as "ON".
-//		Config.setAllOptons(true);
-		
-		this.regexpString = regexpString;
-		Logger.tprint(Config.RegexpVerbose, regexpString, "Input parameter passed to Regexp()");		
-		
-		regexpString = regexpFormatFixup(regexpString);		
-		Logger.tprint(Config.RegexpVerbose, regexpString, "After format fixup");
+		// Config.setAllOptons(true);
 		
 		//
 		// Construct LR-automata for parsing a regexp, such as "(a|b)*abb".
 		// 
 		ContextFreeGrammar grammar = new RegularExpressionContextFreeGrammar();
 		Logger.tprint(Config.ContextFreeGrammarVerbose, grammar, "Context-free grammar");
-		
 		this.lrAutomata = new LrAutomata(grammar);
 		
+		// Original input regexp string.
+		this.regexpString = regexpString;
+		Logger.tprint(Config.RegexpVerbose, regexpString, "Input parameter passed to Regexp()");		
+		
+		// Do some modification to the input regexp string. i.e. convert [0-9] to (0|1|2|3|4|5|6|7|8|9)
+		regexpString = regexpFormatFixup(regexpString);		
+		Logger.tprint(Config.RegexpVerbose, regexpString, "After format fixup");
 		
 		//
 		// Generate AST.
