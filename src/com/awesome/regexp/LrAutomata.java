@@ -480,9 +480,7 @@ public class LrAutomata {
 		for (int i = 0; i < input.length(); i ++) {
 			char ch = input.charAt(i);
 			
-			if (ch >= '0' && ch <= '9' || ch >= 'a' && ch <='z' || ch >= 'A' && ch <= 'Z') {
-				this.inputQueue.add(new InputSymbol(ch, ProductionToken.ch));
-			} else if (ch == '*') {
+			if (ch == '*') {
 				this.inputQueue.add(new InputSymbol(ch, ProductionToken.star));
 			} else if (ch == '(') {
 				this.inputQueue.add(new InputSymbol(ch, ProductionToken.leftParenthesis));
@@ -492,9 +490,7 @@ public class LrAutomata {
 				this.inputQueue.add(new InputSymbol(ch, ProductionToken.verticalBar));
 			} else {
 				this.inputQueue.add(new InputSymbol(ch, ProductionToken.ch));
-//				assert false;
 			}
-//			
 		}
 		
 		this.inputQueue.add(new InputSymbol(ProductionToken.dollar.text, ProductionToken.dollar));
@@ -515,15 +511,6 @@ public class LrAutomata {
 
 	private ProductionToken getSymbolNextToDot(Production production) {
 		ProductionToken dotSymbol = ProductionToken.dot;
-		//
-		// List<ProductionToken> body = production.body;
-		//
-		// int indexOfDot = body.indexOf(dotSymbol);
-		// if (indexOfDot < body.size() - 1) {
-		// return body.get(indexOfDot + 1);
-		// } else {
-		// return null;
-		// }
 		return getOneSymbolNextToAnother(production, dotSymbol);
 	}
 

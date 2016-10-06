@@ -22,7 +22,7 @@ public class Regexp {
 //			"Repeat->{Unit}",
 //			"Repeat->{Unit}*",
 //			"Unit->({Regexp})",
-//			"Unit->[a-zA-Z0-9]",
+//			"Unit->Char",
 //	};
 	
 	private String input;
@@ -50,7 +50,7 @@ public class Regexp {
 	
 	public Regexp(String regexpString){
 		// Set all options as "ON".
-		Config.setAllOptons(true);
+//		Config.setAllOptons(true);
 //		Config.setAllOptons(false);
 		
 		this.regexpString = regexpString;

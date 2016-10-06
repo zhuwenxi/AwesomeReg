@@ -126,27 +126,11 @@ public class RegularExpressionContextFreeGrammar extends ContextFreeGrammar{
 		this.productions.add(production);
 		
 		
-		// Unit -> [0-1a-zA-Z]
+		// Unit -> Char
 		head = new ProductionToken("Unit", false);
 		
 		body = new ArrayList<ProductionToken>();
-		ProductionToken bodyItem = new ProductionToken("[0-1a-zA-Z]");
-		
-		bodyItem.isCollection = true;
-		bodyItem.collection = new ArrayList<Character>();
-		
-		for (char c = '0'; c <= '9'; c++){
-			bodyItem.collection.add(c);
-		}
-		
-		for (char c = 'a'; c <= 'z'; c++){
-			bodyItem.collection.add(c);
-		}
-		
-		for (char c = 'A'; c <= 'Z'; c++){
-			bodyItem.collection.add(c);
-		}
-		
+		ProductionToken bodyItem = new ProductionToken("Char");
 		body.add(bodyItem);
 		
 		production = new Production(head, body);
