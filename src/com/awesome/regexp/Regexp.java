@@ -49,6 +49,9 @@ public class Regexp {
 	}
 	
 	public Regexp(String regexpString){
+		// Set all options as "ON".
+		Config.setAllOptons(true);
+//		Config.setAllOptons(false);
 		
 		this.regexpString = regexpString;
 		Logger.tprint(Config.RegexpVerbose, regexpString, "Input parameter passed to Regexp()");		

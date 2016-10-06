@@ -11,6 +11,16 @@ public class Logger {
 		System.out.print(msg);
 	}
 	
+	public static void printSpaces(int num) {
+		for (int i = 0; i < num; i ++) {
+			print(" ");
+		}
+	}
+	
+	public static void println(Object msg) {
+		System.out.println(msg);
+	}
+	
 	public static void println(boolean config, Object msg) {
 		print(config, msg);
 		print(config, "\n");
@@ -23,7 +33,7 @@ public class Logger {
 		if (config) {
 			println(config, "{ =========================  " + tag + "\n");
 			println(config, msg);
-			println(config,  "\n========================= } End\n");
+			println(config, "\n========================= } End\n");
 		}
 	}
 	

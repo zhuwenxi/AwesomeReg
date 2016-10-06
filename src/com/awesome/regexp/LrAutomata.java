@@ -47,8 +47,31 @@ public class LrAutomata {
 
 		constructActionTable();
 		
+		List<State> states = this.states;
 		Logger.tprint(Config.LrAutomataVerbose && Config.ActionTableVerbose, this.actionTable, "Action table");
-		Logger.tprint(Config.LrAutomataVerbose, this.states, "States of LrAutomata");
+		Logger.tprint(Config.LrAutomataVerbose, new DebugCode() {
+
+			@Override
+			public void code() {
+				for (int i = 0; i < states.size(); i++) {
+					String stateNo = String.format("state %1$2s: ", i);
+					State state = states.get(i);
+					
+					for (int j = 0; j < state.items.size(); j ++) {
+						if (j == 0) {
+							Logger.print(stateNo);
+						} else {
+							Logger.printSpaces(stateNo.length());
+						}
+						
+						Logger.println(state.items.get(j));
+					}
+					
+					
+				}
+			}
+			
+		}, "States of LrAutomata");
 		Logger.tprint(Config.LrAutomataVerbose && Config.GotoTableVerbose, this.gotoTable, "Goto table");
 		
 	}
@@ -527,20 +550,6 @@ public class LrAutomata {
 			
 			body.set(indexOfDot, nextSymbol);
 			body.set(indexOfDot + 1, dotSymbol);
-		}
-	}
-
-	private void printStates() {
-		int stateIndex = 0;
-		for (State state : this.states) {
-			System.out.println("state " + stateIndex + ":");
-			stateIndex++;
-
-			for (Production prod : state.items) {
-				System.out.println(prod);
-			}
-
-			System.out.print("\n");
 		}
 	}
 
