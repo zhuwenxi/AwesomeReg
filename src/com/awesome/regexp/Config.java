@@ -18,7 +18,7 @@ public class Config {
 	
 	public static boolean DfaVerbose = false;
 	
-	public static boolean Stat = true;
+	public static boolean Stat = false;
 	
 	public static void setAllOptons(boolean option) {
 		Config.RegexpVerbose = option;

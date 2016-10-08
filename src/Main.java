@@ -183,7 +183,14 @@ public class Main {
 //				});
 				
 //				Statistic.print(Statistic.Tag.Automata);
-				Statistic.printPercent();
+				Debug.run(Config.Stat, new DebugCode() {
+
+					@Override
+					public void code() {
+						Statistic.printPercent();						
+					}
+					
+				});
 			}
 		});
 	}
