@@ -35,18 +35,14 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 	
 	public DeterministicFiniteAutomata(FiniteAutomata nfa) {
 		this();
+		
 		nfaToDfa(nfa);
+		Logger.tprint(Config.DFA_VERBOSE && Config.DFA_BASIC, this.internalTransDiag, "DFA_BASIC");
+		
 		renameNfaStateToDfaState();
+		Logger.tprint(Config.DFA_VERBOSE && Config.DFA_RENAME_STATE, this.transDiag, "DFA_RENAME_STATE");
 		
-		minifyStates();
-		
-		printDebugLog("DFA info:");
-		printDebugLog(this.states);
-		printDebugLog(this.transDiag);
-		
-		printDebugLog(this.start);
-		printDebugLog(this.end);
-		
+		minifyStates();		
 	}
 	
 	/*

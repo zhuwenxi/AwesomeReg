@@ -10,10 +10,14 @@ import com.awesome.regexp.Statistic;
 public class Main {
 
 	public static void main(String[] args) {
+		runTests();
+	}
+	
+	private static void runTests() {
 		Moli.describe("Test suites for correctness checking.", new TestSuites() {
 			public void run() {
 				
-				Debug.run(Config.Stat, new DebugCode() {
+				Debug.run(Config.STAT, new DebugCode() {
 
 					@Override
 					public void code() {
@@ -24,6 +28,12 @@ public class Main {
 				
 				int execCount = 1;
 				for (int i = 0; i < execCount; i ++) {
+					
+					it("expect 'ab' doesn't match ' abc'.", new TestSuite() {
+						public void run() {
+							expect(testcase("ab", " abc")).toBe("ab");
+						}
+					});
 					
 					it("expect 'fee|fie' doesn't match 'fif'.", new TestSuite() {
 						public void run() {
@@ -148,7 +158,7 @@ public class Main {
 					
 				}
 				
-				Debug.run(Config.Stat, new DebugCode() {
+				Debug.run(Config.STAT, new DebugCode() {
 
 					@Override
 					public void code() {
@@ -157,7 +167,7 @@ public class Main {
 					
 				});
 				
-				Debug.run(Config.Stat, new DebugCode() {
+				Debug.run(Config.STAT, new DebugCode() {
 
 					@Override
 					public void code() {

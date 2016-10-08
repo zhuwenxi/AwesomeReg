@@ -48,8 +48,8 @@ public class LrAutomata {
 		constructActionTable();
 		
 		List<State> states = this.states;
-		Logger.tprint(Config.LrAutomataVerbose && Config.ActionTableVerbose, this.actionTable, "Action table");
-		Logger.tprint(Config.LrAutomataVerbose, new DebugCode() {
+		Logger.tprint(Config.LRAUTOMATA_VERBOSE && Config.LRAUTOMATA_ACTIONTABLE, this.actionTable, "Action table");
+		Logger.tprint(Config.LRAUTOMATA_VERBOSE, new DebugCode() {
 
 			@Override
 			public void code() {
@@ -72,7 +72,7 @@ public class LrAutomata {
 			}
 			
 		}, "States of LrAutomata");
-		Logger.tprint(Config.LrAutomataVerbose && Config.GotoTableVerbose, this.gotoTable, "Goto table");
+		Logger.tprint(Config.LRAUTOMATA_VERBOSE && Config.LRAUTOMATA_GOTOTABLE, this.gotoTable, "Goto table");
 		
 	}
 

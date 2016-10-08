@@ -43,7 +43,7 @@ public class Statistic {
 	public static void pause(Tag tag) {
 		TimeStamp ts = timeCounter.get(tag);
 		ts.update();
-		Logger.println(Config.StatInterval && tag == Tag.DFA, String.format("Interval increase on %1$-15s to %2$d", tag.name(), ts.timeInterval));
+		Logger.println(Config.STAT_INTERVAL && tag == Tag.DFA, String.format("Interval increase on %1$-15s to %2$d", tag.name(), ts.timeInterval));
 	} 
 	
 	public static void print(Tag tag) {
