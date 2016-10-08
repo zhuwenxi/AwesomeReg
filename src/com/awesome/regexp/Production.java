@@ -1,9 +1,7 @@
 package com.awesome.regexp;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Production {
 
@@ -19,8 +17,6 @@ public class Production {
 	
 	private static List<Character> letters;
 	private static List<Character> numbers;
-
-	private static Map<State, Map<Character, State>> transitionMap;
 
 	static {
 		//
@@ -50,11 +46,6 @@ public class Production {
 		for (number = '0'; number <= '9'; number++) {
 			Production.numbers.add(number);
 		}
-
-		//
-		// Initialize the "transitionMap"
-		//
-		Production.transitionMap = new HashMap<>();
 	}
 
 	public Production() {

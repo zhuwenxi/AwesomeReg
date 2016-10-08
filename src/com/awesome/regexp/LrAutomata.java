@@ -117,7 +117,6 @@ public class LrAutomata {
 				Stack<AbstractSyntaxTree.TreeNode> tmpAstStack = new Stack<AbstractSyntaxTree.TreeNode>();
 				
 				for (int i = prodToReduce.body.size() - 2; i >= 0 ; i --) {
-					ProductionToken lastProductionToken = prodToReduce.body.get(i);
 					this.stateStack.pop();
 					
 					symbolStack.pop();
@@ -279,7 +278,6 @@ public class LrAutomata {
 		State target = null;
 
 		for (Production production : origin.getProductions()) {
-			List<ProductionToken> body = production.body;
 
 			ProductionToken symbolNextToDot = getSymbolNextToDot(production);
 			if (symbolNextToDot != null && symbolNextToDot.equals(symbol)) {
