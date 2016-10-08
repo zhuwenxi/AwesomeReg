@@ -55,22 +55,77 @@ public class Regexp {
 		//
 		// Construct LR-automata for parsing a regexp, such as "(a|b)*abb".
 		// 
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.start(Statistic.Tag.Automata);
+			}
+			
+		});
+		
 		ContextFreeGrammar grammar = new RegularExpressionContextFreeGrammar();
 		Logger.tprint(Config.ContextFreeGrammarVerbose, grammar, "Context-free grammar");
 		this.lrAutomata = new LrAutomata(grammar);
+		
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.pause(Statistic.Tag.Automata);
+			}
+			
+		});
 		
 		// Original input regexp string.
 		this.regexpString = regexpString;
 		Logger.tprint(Config.RegexpVerbose, regexpString, "Input parameter passed to Regexp()");		
 		
 		// Do some modification to the input regexp string. i.e. convert [0-9] to (0|1|2|3|4|5|6|7|8|9)
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.start(Statistic.Tag.FormatFixup);
+			}
+			
+		});
+		
 		regexpString = regexpFormatFixup(regexpString);		
 		Logger.tprint(Config.RegexpVerbose, regexpString, "After format fixup");
+		
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.pause(Statistic.Tag.FormatFixup);
+			}
+			
+		});
 		
 		//
 		// Generate AST.
 		//
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.start(Statistic.Tag.AST);
+			}
+			
+		});
+		
 		this.ast = this.lrAutomata.parse(regexpString);
+		
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.pause(Statistic.Tag.AST);
+			}
+			
+		});
+		
 		Logger.tprint(Config.AstVerbose, new DebugCode() {
 
 			@Override
@@ -83,18 +138,62 @@ public class Regexp {
 		// 
 		// Generate NFA from AST.
 		// 
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.start(Statistic.Tag.NFA);
+			}
+			
+		});
+		
 		FiniteAutomata NFA = new NondeterministicFiniteAutomata(ast);
 		Logger.tprint(Config.NfaVerbose, NFA.transDiag, "NFA transform diagram");
+		
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.pause(Statistic.Tag.NFA);
+			}
+			
+		});
 		
 		//
 		// Generate DFA from NFA.
 		// 
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.start(Statistic.Tag.DFA);
+			}
+			
+		});
+		
 		this.dfa = new DeterministicFiniteAutomata(NFA);
 		Logger.tprint(Config.DfaVerbose, dfa.transDiag, "DFA transform diagram");
 		
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.pause(Statistic.Tag.DFA);
+			}
+			
+		});
 	}
 	
 	public String match(String input) {
+		Debug.run(Config.Stat, new DebugCode() {
+
+			@Override
+			public void code() {
+				Statistic.start(Statistic.Tag.FuncMatch);
+			}
+			
+		});
+		
 		this.input = input;
 		this.index = 0;
 		
@@ -134,8 +233,28 @@ public class Regexp {
 		}
 		
 		if (this.dfa.isAcceptState(state)) {
+			
+			Debug.run(Config.Stat, new DebugCode() {
+
+				@Override
+				public void code() {
+					Statistic.pause(Statistic.Tag.FuncMatch);
+				}
+				
+			});
+			
 			return ret;
 		} else {
+			
+			Debug.run(Config.Stat, new DebugCode() {
+
+				@Override
+				public void code() {
+					Statistic.pause(Statistic.Tag.FuncMatch);
+				}
+				
+			});
+			
 			return null;
 		}
 	}

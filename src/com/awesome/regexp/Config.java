@@ -18,6 +18,8 @@ public class Config {
 	
 	public static boolean DfaVerbose = false;
 	
+	public static boolean Stat = true;
+	
 	public static void setAllOptons(boolean option) {
 		Config.RegexpVerbose = option;
 		Config.ContextFreeGrammarVerbose = option;
@@ -27,5 +29,6 @@ public class Config {
 		Config.AstVerbose = option;
 		Config.NfaVerbose = option;
 		Config.DfaVerbose = option;
+		Config.Stat = option;
 	}
 }
