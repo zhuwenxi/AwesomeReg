@@ -285,6 +285,10 @@ public class Regexp {
 		}
 	}
 	
+	public FiniteAutomata getDfa() {
+		return this.dfa;
+	}
+	
 	private InputSymbol nextChar() {
 		
 		if (this.index < this.input.length()) {
