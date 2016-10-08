@@ -283,6 +283,7 @@ public class Regexp {
 		
 		fixedupRegexp = extendedRegexpFixup(fixedupRegexp);
 		fixedupRegexp = collectionFixedup(fixedupRegexp);
+		fixedupRegexp = plusQuantifierFixup(fixedupRegexp);
 		
 		return fixedupRegexp;
 	}
@@ -336,6 +337,74 @@ public class Regexp {
 		}
 		
 		return fixedupRegexp;
+	}
+	
+	/*
+	 * X+: X, one or more times. i.e. transform "(ab)+" to "(ab)(ab)*"
+	 */
+	private String plusQuantifierFixup(String originRegexp) {
+		
+		// This stack is to help find the corresponding left-parentheses.
+		Stack<Character> stack = new Stack<>();
+		
+		int plusQuantifierIndex = originRegexp.indexOf("+");
+		char charBeforePlus = 0;
+		
+		while (plusQuantifierIndex != -1) {
+			charBeforePlus = originRegexp.charAt(plusQuantifierIndex - 1);
+			
+			if (charBeforePlus == ')') {
+				int leftParenthesesIndex = -1;
+				
+				for (int i = plusQuantifierIndex - 1; i >= 0; i --) {
+					char currentChar = originRegexp.charAt(i);
+					if (currentChar == ')') {
+						stack.push(currentChar);
+					} else if (currentChar == '(') {
+						if (!stack.isEmpty() &&  stack.peek() == ')') {
+							stack.pop();
+						}
+					}
+					
+					if (stack.isEmpty()) {
+						leftParenthesesIndex = i;
+						break;
+					}
+				}
+				
+				if (leftParenthesesIndex != -1) {
+					originRegexp = originRegexp.substring(0, plusQuantifierIndex) + originRegexp.substring(leftParenthesesIndex, plusQuantifierIndex) + "*" + originRegexp.substring(plusQuantifierIndex + 1);
+				}
+			} else if (charBeforePlus == ']') {
+				int leftBracketIndex = -1;
+				
+				for (int i = plusQuantifierIndex - 1; i >= 0; i --) {
+					char currentChar = originRegexp.charAt(i);
+					if (currentChar == ']') {
+						stack.push(currentChar);
+					} else if (currentChar == '[') {
+						if (!stack.isEmpty() &&  stack.peek() == ']') {
+							stack.pop();
+						}
+					}
+					
+					if (stack.isEmpty()) {
+						leftBracketIndex = i;
+						break;
+					}
+				}
+				
+				if (leftBracketIndex != -1) {
+					originRegexp = originRegexp.substring(0, plusQuantifierIndex) + originRegexp.substring(leftBracketIndex, plusQuantifierIndex) + "*" + originRegexp.substring(plusQuantifierIndex + 1);
+				}
+			} else {
+				originRegexp = originRegexp.substring(0, plusQuantifierIndex) + charBeforePlus + "*" + originRegexp.substring(plusQuantifierIndex + 1);
+			}
+			
+			plusQuantifierIndex = originRegexp.indexOf("+");
+		}
+		
+		return originRegexp;
 	}
 	
 	private String collectionToStandardRegexp(String collectionStr) {

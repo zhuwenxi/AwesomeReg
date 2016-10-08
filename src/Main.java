@@ -22,7 +22,7 @@ public class Main {
 					
 				});
 				
-				int execCount = 10;
+				int execCount = 1;
 				for (int i = 0; i < execCount; i ++) {
 					
 					it("expect 'fee|fie' doesn't match 'fif'.", new TestSuite() {
@@ -95,6 +95,42 @@ public class Main {
 					it("expect '[_a-zA-Z][_0-9a-zA-Z]*' matchs 'ret_val = 1'.", new TestSuite() {
 						public void run() {
 							expect(testcase("[_a-zA-Z][_0-9a-zA-Z]*", "ret_val = 1")).toBe("ret_val");
+						}
+					});
+					
+					it("expect 'ab+' matchs 'abbb'.", new TestSuite() {
+						public void run() {
+							expect(testcase("ab+", "abbb")).toBe("abbb");
+						}
+					});
+					
+					it("expect '[0-9]+' matchs 'ret_val = 1'.", new TestSuite() {
+						public void run() {
+							expect(testcase("[0-9]+", "12")).toBe("12");
+						}
+					});
+					
+					it("expect '(abc)+' matchs 'abc'.", new TestSuite() {
+						public void run() {
+							expect(testcase("(abc)+", "abc")).toBe("abc");
+						}
+					});
+					
+					it("expect '([abc])+' matchs 'abc'.", new TestSuite() {
+						public void run() {
+							expect(testcase("([abc])+", "abc")).toBe("abc");
+						}
+					});
+					
+					it("expect '((ab)(cde))+' matchs 'abcde'.", new TestSuite() {
+						public void run() {
+							expect(testcase("((ab)(cde))+", "abcde")).toBe("abcde");
+						}
+					});
+					
+					it("expect '((ab)(cde))+' matchs 'abcde'.", new TestSuite() {
+						public void run() {
+							expect(testcase("((ab)(cde))+", "abcdeabcde")).toBe("abcdeabcde");
 						}
 					});
 					
