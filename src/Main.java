@@ -10,7 +10,7 @@ import com.awesome.regexp.Statistic;
 public class Main {
 
 	public static void main(String[] args) {
-		Moli.describe("Test suites for AwesomeReg", new TestSuites() {
+		Moli.describe("Test suites for correctness checking.", new TestSuites() {
 			public void run() {
 				
 				Debug.run(Config.Stat, new DebugCode() {
@@ -157,7 +157,6 @@ public class Main {
 					
 				});
 				
-//				Statistic.print(Statistic.Tag.Automata);
 				Debug.run(Config.Stat, new DebugCode() {
 
 					@Override

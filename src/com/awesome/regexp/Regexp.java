@@ -1,7 +1,9 @@
 package com.awesome.regexp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 public class Regexp {
@@ -31,7 +33,7 @@ public class Regexp {
 	//
 	// LR Automata for the regular expression:
 	//
-	private LrAutomata lrAutomata;
+	private static LrAutomata cachedLrAutomata;
 	
 	//
 	// Abstract syntax tree:
@@ -43,6 +45,15 @@ public class Regexp {
      */
 	private FiniteAutomata dfa;
 	
+	/*
+	 * DFA cache.
+	 */
+	private static Map<String, FiniteAutomata> dfaCache;
+	
+	static {
+		dfaCache = new HashMap<String, FiniteAutomata>();
+	}
+	
 	
 	public Regexp(){
 		
@@ -51,6 +62,14 @@ public class Regexp {
 	public Regexp(String regexpString){
 		// Set all options as "ON".
 		// Config.setAllOptons(true);
+		
+		// 
+		// DFA cache look up. If look up hit, it's not necessary to re-calculate the DFA.
+		//
+		if (dfaCache.containsKey(regexpString)) {
+			this.dfa = dfaCache.get(regexpString);
+			return;
+		}
 		
 		//
 		// Construct LR-automata for parsing a regexp, such as "(a|b)*abb".
@@ -66,7 +85,12 @@ public class Regexp {
 		
 		ContextFreeGrammar grammar = new RegularExpressionContextFreeGrammar();
 		Logger.tprint(Config.ContextFreeGrammarVerbose, grammar, "Context-free grammar");
-		this.lrAutomata = new LrAutomata(grammar);
+		
+		if (Regexp.cachedLrAutomata == null) {
+			Regexp.cachedLrAutomata = new LrAutomata(grammar);
+		}
+//		this.lrAutomata = Regexp.cachedLrAutomata;
+		
 		
 		Debug.run(Config.Stat, new DebugCode() {
 
@@ -115,7 +139,7 @@ public class Regexp {
 			
 		});
 		
-		this.ast = this.lrAutomata.parse(regexpString);
+		this.ast = Regexp.cachedLrAutomata.parse(regexpString);
 		
 		Debug.run(Config.Stat, new DebugCode() {
 
@@ -172,6 +196,9 @@ public class Regexp {
 		});
 		
 		this.dfa = new DeterministicFiniteAutomata(NFA);
+		// Update the DFA cache.
+		Regexp.dfaCache.put(this.regexpString, this.dfa);
+		
 		Logger.tprint(Config.DfaVerbose, dfa.transDiag, "DFA transform diagram");
 		
 		Debug.run(Config.Stat, new DebugCode() {

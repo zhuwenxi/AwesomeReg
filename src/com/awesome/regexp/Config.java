@@ -20,6 +20,8 @@ public class Config {
 	
 	public static boolean Stat = false;
 	
+	public static boolean StatInterval = false;
+	
 	public static void setAllOptons(boolean option) {
 		Config.RegexpVerbose = option;
 		Config.ContextFreeGrammarVerbose = option;
@@ -30,5 +32,6 @@ public class Config {
 		Config.NfaVerbose = option;
 		Config.DfaVerbose = option;
 		Config.Stat = option;
+		Config.StatInterval = option;
 	}
 }
