@@ -19,7 +19,7 @@ public class FiniteAutomata {
 	
 	public List<InputSymbol> symbolSet;
 	
-	protected TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState> transDiag;
+	public TwoStageHashMap<FiniteAutomataState, InputSymbol, FiniteAutomataState> transDiag;
 	
 	public FiniteAutomata() {
 		this.nextStateNumber = 0;
