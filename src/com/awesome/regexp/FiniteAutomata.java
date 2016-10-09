@@ -108,10 +108,12 @@ class FiniteAutomataState {
 	
 	public int stateNumber;
 	public boolean isAcceptState;
+	public String regexp;
 	
 	public FiniteAutomataState() {
 		this.stateNumber = -1;
 		this.isAcceptState = false;
+		this.regexp = null;
 	}
 	
 	public FiniteAutomataState(int stateNumber) {

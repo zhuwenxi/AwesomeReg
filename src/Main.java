@@ -10,8 +10,8 @@ import com.awesome.regexp.Statistic;
 public class Main {
 
 	public static void main(String[] args) {
-		new Regexp("(ab|cd)|ef");
-//		runTests();
+//		new Regexp("(ab|cd)|ef");
+		runTests();
 	}
 	
 	private static void runTests() {

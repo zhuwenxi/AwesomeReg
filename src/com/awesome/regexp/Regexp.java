@@ -40,10 +40,20 @@ public class Regexp {
 	//
 	private AbstractSyntaxTree ast;
 	
+	/*
+	 * NFA
+	 */
+	private FiniteAutomata nfa;
+	
     /*
      * Deterministic Finite Automata:
      */
 	private FiniteAutomata dfa;
+	
+	/*
+	 * NFA cache.
+	 */
+	private static Map<String, FiniteAutomata> nfaCache;
 	
 	/*
 	 * DFA cache.
@@ -52,6 +62,7 @@ public class Regexp {
 	
 	static {
 		dfaCache = new HashMap<String, FiniteAutomata>();
+		nfaCache = new HashMap<String, FiniteAutomata>();
 	}
 	
 	
@@ -68,6 +79,7 @@ public class Regexp {
 		//
 		if (dfaCache.containsKey(regexpString)) {
 			this.dfa = dfaCache.get(regexpString);
+			this.nfa = nfaCache.get(regexpString);
 			return;
 		}
 		
@@ -171,8 +183,9 @@ public class Regexp {
 			
 		});
 		
-		FiniteAutomata NFA = new NondeterministicFiniteAutomata(ast);
-		Logger.tprint(Config.NFA_VERBOSE, NFA.transDiag, "NFA transform diagram");
+		this.nfa = new NondeterministicFiniteAutomata(ast);
+		Regexp.nfaCache.put(this.regexpString, this.nfa);
+		Logger.tprint(Config.NFA_VERBOSE, this.nfa.transDiag, "NFA transform diagram");
 		
 		Debug.run(Config.STAT, new DebugCode() {
 
@@ -195,7 +208,7 @@ public class Regexp {
 			
 		});
 		
-		this.dfa = new DeterministicFiniteAutomata(NFA);
+		this.dfa = new DeterministicFiniteAutomata(this.nfa);
 		// Update the DFA cache.
 		Regexp.dfaCache.put(this.regexpString, this.dfa);
 		Logger.tprint(Config.DFA_VERBOSE, dfa.transDiag, "DFA transform diagram");
@@ -287,6 +300,10 @@ public class Regexp {
 	
 	public FiniteAutomata getDfa() {
 		return this.dfa;
+	}
+	
+	public FiniteAutomata getNfa() {
+		return this.nfa;
 	}
 	
 	private InputSymbol nextChar() {
