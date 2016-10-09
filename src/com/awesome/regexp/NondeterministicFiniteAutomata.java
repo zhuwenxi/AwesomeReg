@@ -17,6 +17,7 @@ public class NondeterministicFiniteAutomata extends FiniteAutomata {
 		TransDiagStartAndEnd startAndEnd = buildNfaFromRoot(ast.root);
 		this.start = startAndEnd.startState;
 		this.end.add(startAndEnd.endState);
+		startAndEnd.endState.markAsAcceptState();
 	}
 	
 	private TransDiagStartAndEnd buildNfaFromRoot(AbstractSyntaxTree.TreeNode node) {

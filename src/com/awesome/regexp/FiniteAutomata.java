@@ -105,19 +105,27 @@ public class FiniteAutomata {
 }
 
 class FiniteAutomataState {
+	
 	public int stateNumber;
+	public boolean isAcceptState;
 	
 	public FiniteAutomataState() {
 		this.stateNumber = -1;
+		this.isAcceptState = false;
 	}
 	
 	public FiniteAutomataState(int stateNumber) {
+		this();
 		this.stateNumber = stateNumber;
+	}
+	
+	public void markAsAcceptState() {
+		this.isAcceptState = true;
 	}
 	
 	@Override
 	public boolean equals(Object that) {
-		return that != null && this.stateNumber == ((FiniteAutomataState)that).stateNumber;
+		return that != null && this.stateNumber == ((FiniteAutomataState)that).stateNumber && this.isAcceptState == ((FiniteAutomataState)that).isAcceptState;
 	}
 	
 	@Override
@@ -127,7 +135,7 @@ class FiniteAutomataState {
 	
 	@Override
 	public String toString() {
-		return String.valueOf(this.stateNumber);
+		return String.valueOf(this.stateNumber) + (this.isAcceptState ? "*" : "");
 	}
 }
 

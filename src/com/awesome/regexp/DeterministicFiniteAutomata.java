@@ -111,10 +111,24 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 			
 			if (this.internalEnd.contains(nfaStates)) {
 				this.end.add(newDfaState);
+				newDfaState.markAsAcceptState();
 			}
 			
 			this.states.add(newDfaState);
 		}
+		
+		FiniteAutomata that = this;
+		Logger.tprint(Config.DFA_RENAME_STATE_START_END, new DebugCode() {
+
+			@Override
+			public void code() {
+				Logger.println("start state: ");
+				Logger.println(that.start);
+				Logger.println("end state: ");
+				Logger.println(that.end);
+			}
+			
+		}, "DFA_RENAME_STATE_START_END");
 		
 		for (List<FiniteAutomataState> nfaStates : this.internalTransDiag.getL1KeySet()) {
 			for (InputSymbol input : this.internalTransDiag.getL2KeySet(nfaStates)) {
@@ -239,6 +253,7 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 			for (FiniteAutomataState endState: this.end) {
 				if (partition.contains(endState)) {
 					endStates.add(newState);
+					newState.markAsAcceptState();
 					break;
 				}
 			}

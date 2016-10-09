@@ -14,9 +14,10 @@ public class Config {
 	
 	public static boolean NFA_VERBOSE = false;
 	
-	public static boolean DFA_VERBOSE = false;
+	public static boolean DFA_VERBOSE = true;
 	public static boolean DFA_BASIC = false;
-	public static boolean DFA_RENAME_STATE = false;
+	public static boolean DFA_RENAME_STATE = true;
+	public static boolean DFA_RENAME_STATE_START_END = false;
 	
 	public static boolean STAT = false;
 	public static boolean STAT_INTERVAL = false;
