@@ -37,13 +37,13 @@ public class Statistic {
 			timeCounter.put(tag, ts);
 		}
 		
-		ts.lastUpdateTime = new Date();
+		ts.lastUpdateTime = System.nanoTime();
 	}
 	
 	public static void pause(Tag tag) {
 		TimeStamp ts = timeCounter.get(tag);
 		ts.update();
-		Logger.println(Config.STAT_INTERVAL && tag == Tag.DFA, String.format("Interval increase on %1$-15s to %2$d", tag.name(), ts.timeInterval));
+		Logger.println(Config.STAT_INTERVAL && tag == Tag.DFA, String.format("Interval increase on %1$-15s to %2$fs", tag.name(), ts.getMillis()));
 	} 
 	
 	public static void print(Tag tag) {
@@ -52,7 +52,7 @@ public class Statistic {
 		if (ts == null) return;
 		
 		Logger.print(String.format("Cost on %1$-15s: ", tag.name()));
-		Logger.println(ts.timeInterval);
+		Logger.println(ts.getMillis());
 	}
 	
 	public static void print() {
@@ -69,7 +69,7 @@ public class Statistic {
 		
 	}
 	
-	public static void printPercent(long total) {
+	public static void printPercent(float total) {
 		Logger.tprint(true, new DebugCode() {
 
 			@Override
@@ -80,8 +80,8 @@ public class Statistic {
 					if (ts == null) return;
 					
 					Logger.print(String.format("Cost on %1$-15s: ", t.name()));
-					Logger.print(String.format("%1$5d", ts.timeInterval));
-					Logger.println(" [" + ((float)ts.timeInterval / total) * 100 + "%]");
+					Logger.print(String.format("%1$10.2f ms", ts.getMillis()));
+					Logger.println(" [" + ((float)ts.getMillis() / total) * 100 + "%]");
 					
 				}
 			}
@@ -90,28 +90,33 @@ public class Statistic {
 	}
 	
 	public static void printPercent() {
-		long total = timeCounter.get(Tag.AllSpecs).timeInterval;
+		float total = timeCounter.get(Tag.AllSpecs).getMillis();
 		printPercent(total);
 	}
 }
 
 class TimeStamp {
 	long timeInterval;
-	Date lastUpdateTime;
+	long lastUpdateTime;
 	
 	public TimeStamp() {
-		this(0, null);
+		this(0, 0);
 	}
 	
-	public TimeStamp(long timeInterval, Date lastUpdateTime) {
+	public TimeStamp(long timeInterval, long lastUpdateTime) {
 		this.timeInterval = timeInterval;
 		this.lastUpdateTime = lastUpdateTime;
 	}
 	
 	public void update() {
-		Date currentDate = new Date();
-		long newInterval = currentDate.getTime() - lastUpdateTime.getTime();
+		long currentTime = System.nanoTime();
+		long newInterval = currentTime - lastUpdateTime;
 		this.timeInterval =  newInterval + this.timeInterval;
-		this.lastUpdateTime = currentDate;
+		this.lastUpdateTime = currentTime;
+	}
+	
+	public float getMillis() {
+		return (float)this.timeInterval / (1000 * 1000);
+//		return this.timeInterval;
 	}
 }
