@@ -92,7 +92,6 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 					if (!Q.contains(newDfaState)) {
 						this.internalStates.add(newDfaState);
 						
-						assert nfa.end.size() == 1;
 						if (newDfaState.contains(nfa.end.get(0))) {
 							// Mark as accept state:
 							this.internalEnd.add(newDfaState);
