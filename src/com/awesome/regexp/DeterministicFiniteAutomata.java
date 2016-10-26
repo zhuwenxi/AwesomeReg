@@ -48,7 +48,7 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 	/*
 	 * Use subset construction to convert NFA to DFA.
 	 */
-	private void nfaToDfa(FiniteAutomata nfa) {
+	public void nfaToDfa(FiniteAutomata nfa) {
 		// Set symbolSet.
 		this.symbolSet = nfa.symbolSet;
 		
@@ -100,7 +100,7 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		}
 	}
 	
-	private void renameNfaStateToDfaState() {
+	public void renameNfaStateToDfaState() {
 		for (List<FiniteAutomataState> nfaStates : this.internalStates) {
 			FiniteAutomataState newDfaState = createStates(1).get(0);
 			this.stateDict.put(nfaStates, newDfaState);

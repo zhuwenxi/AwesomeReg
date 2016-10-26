@@ -1,6 +1,6 @@
 package com.awesome.regexp;
 
-class InputSymbol {
+public class InputSymbol {
 	public static InputSymbol epsilon;
 	
 	public boolean isEpsilon;
