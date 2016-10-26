@@ -1,6 +1,5 @@
 package com.awesome.regexp;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
