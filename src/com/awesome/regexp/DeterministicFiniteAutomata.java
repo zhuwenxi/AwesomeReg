@@ -34,6 +34,10 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 	}
 	
 	public DeterministicFiniteAutomata(FiniteAutomata nfa) {
+		this(nfa, true);
+	}
+	
+	public DeterministicFiniteAutomata(FiniteAutomata nfa, boolean minification) {
 		this();
 		
 		nfaToDfa(nfa);
@@ -42,7 +46,9 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		renameNfaStateToDfaState();
 		Logger.tprint(Config.DFA_VERBOSE && Config.DFA_RENAME_STATE, this.transDiag, "DFA_RENAME_STATE");
 		
-		minifyStates();		
+		if (minification) {
+			minifyStates();
+		}
 	}
 	
 	/*
