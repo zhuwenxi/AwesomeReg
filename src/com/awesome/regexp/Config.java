@@ -19,7 +19,7 @@ public class Config {
 	public static boolean DFA_RENAME_STATE = false;
 	public static boolean DFA_RENAME_STATE_START_END = false;
 	
-	public static boolean STAT = true;
+	public static boolean STAT = false;
 	public static boolean STAT_INTERVAL = false;
 	
 	public static void setAllOptons(boolean option) {
