@@ -10,7 +10,8 @@ import com.awesome.regexp.Statistic;
 public class Main {
 
 	public static void main(String[] args) {
-//		new Regexp("(ab|cd)|ef");
+//		new Regexp("in*");
+//		new Regexp("[_a-zA-Z][_a-zA-Z0-9]*");
 		runTests();
 	}
 	

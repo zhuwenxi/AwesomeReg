@@ -92,9 +92,10 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 					if (!Q.contains(newDfaState)) {
 						this.internalStates.add(newDfaState);
 						
-						if (newDfaState.contains(nfa.end.get(0))) {
-							// Mark as accept state:
-							this.internalEnd.add(newDfaState);
+						for (FiniteAutomataState nfaEnd : nfa.end) {
+							if (newDfaState.contains(nfaEnd)) {
+								this.internalEnd.add(newDfaState);
+							}
 						}
 						
 						workList.add(newDfaState);
@@ -109,6 +110,13 @@ public class DeterministicFiniteAutomata extends FiniteAutomata{
 		for (List<FiniteAutomataState> nfaStates : this.internalStates) {
 			FiniteAutomataState newDfaState = createStates(1).get(0);
 			this.stateDict.put(nfaStates, newDfaState);
+			
+			// Mark end state with it's regexp
+			for (FiniteAutomataState nfaState : nfaStates) {
+				if (nfaState.isAcceptState && nfaState.regexp != null && nfaState.regexp.length() > 0) {
+					newDfaState.regexp = nfaState.regexp;
+				}
+			}
 			
 			if (nfaStates == this.internalStart) {
 				this.start = newDfaState;
